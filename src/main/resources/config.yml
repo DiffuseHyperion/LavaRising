@@ -1,0 +1,86 @@
+####################################################
+#               Lava Rising Config!                #
+#               spaghetti code hell                #
+#             Typical flow of phases:              #
+#         Pre-Game > Grace > Main > Post           #
+#   Overtime (might be skipped)  ^                 #
+####################################################
+pregame:
+  worldname: world
+  # The name of the world being generated. This should be the same as level-name in your server.properties file.
+  bordersize: 10
+  # The size of the border at the start. Unit is the number of blocks for the border diameter.
+  rerolling:
+    enabled: true
+    # Allow rerolling of the map by a command.
+    percentagetopass: 80
+    # How much players need to agree on a reroll to reroll the map.
+    kickmessage: "%sender% wants to reroll the map! Map is now being rerolled. Join back soon!"
+    # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
+    # Replace %sender% with the final person's decision to reroll the map.
+  startcountdown:
+    enabled: true
+    # When /start is sent, the plugin will count down a time before starting.
+grace:
+  duration: 60
+  # How long will the grace period last. Unit is seconds.
+  finalbordersize: 175
+  # How big the border will expand to at the end. Unit is the number of blocks for the border diameter.
+  # Keep in mind the amount of blocks needed to be filled by the plugin! 200 will start lagging the server, but it may not depending on your hardware.
+  # fawe coming soon, when 1.18 support comes out
+  speed: 30
+  # How long should it take for the border to expand to its final size. Unit is seconds.
+  timername: The game is in the grace period! PVP is off. %timer% seconds left.
+  # What should the title of the timer be.
+  # Replace the amount of seconds left with %timer%.
+main:
+  lavainterval: 5
+  # How fast the lava rises when the lava level is below sea level. Unit is seconds.
+  timername: The game is in the main period! Lava is at %level%, you are %distance% blocks away.
+  # What should the title of the timer be.
+  # Replace %distance% with the distance a player is from the lava y-level.
+  # Replace %level% with the lava y-level.
+  # (Tip: Include %level% if overtime is enabled to warn players of impending overtime.)
+  deathmessage: "%original% and is eliminated! %left% players remaining."
+  # What the death message should be.
+  # Replace the original death message with %replace%.
+  # Replace the player who died with %player%.
+  # Replace the amount of players left with %left%.
+overtime:
+  # Lava does not rise during overtime. Game ends when there is one person left alive!
+  warning:
+    # Warn the players about overtime? The warning will be shown by a bossbar below the main timer.
+    enabled: true
+    # self-explanatory
+    time: 10
+    # How long the meesage will show for. Unit is seconds.
+    message: Overtime triggers at Y %threshold%!
+    # What the message will be.
+    # Replace %threshold% with the threshold to activate overtime. Set below VVV
+  threshold: 305
+  # The level of lava needed for the game to be considered to be in overtime.
+  # Keep in mind that the build limit is 320 on 1.18, and 255 on <1.18!
+  finalbordersize: 20
+  # How small the border will shrink to. Unit is the number of blocks for the border diameter.
+  speed: 120
+  # How fast the border will shrink.
+  # Make sure the speed is not too fast so that people can see it coming!
+  bartitle: OVERTIME! Lava is paused. Border will shrink slowly to the middle. Last one alive wins!
+  # What the overtime bar name should be.
+  # No placeholders allowed.
+post:
+  duration: 30
+  # How long the server will wait before restarting the server.
+  creativemode: all
+  # (mostly for fun) Who the game will give creative mode to at the end of the game.
+  # Accepted values: 'none', 'winner', 'all'
+  kickmessage: The game is restarting now. Join back soon!
+  # What should be the kick message when the server is restarting.
+  timername: "%winner% has survived! The server will restart in %timer% seconds."
+  # What should the title of the timer be.
+  # Replace %winner% with the winner of the game.
+  # Replace %timer% with the amount of seconds left before server restart.
+debug:
+  warnings: true
+  # The plugin will warn the console when incoming errors are encountered. If you already know about this, you can disable the warnings by setting this to false.
+

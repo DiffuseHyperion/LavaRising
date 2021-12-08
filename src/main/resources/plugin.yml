@@ -1,0 +1,22 @@
+name: LavaRising
+version: '${project.version}'
+main: yjservers.tk.lavarising.LavaRising
+api-version: 1.17
+description: i lost my previous plugin files lmfao
+commands:
+  start:
+    description: Starts the game.
+    permission: lavarising.start
+  reroll:
+    description: Vote to reroll the map before the game starts. It must be enabled by the operator.
+    permission: lavarising.reroll
+  state:
+    description: check game state
+    permission: lavarising.state
+permissions:
+  lavarising.start:
+    default: op
+  lavarising.reroll:
+    default: true
+  lavarising.state:
+    default: op
