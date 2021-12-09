@@ -15,6 +15,13 @@ pregame:
     # Allow rerolling of the map by a command.
     percentagetopass: 80
     # How much players need to agree on a reroll to reroll the map.
+    beforemessage: Rerolling of the map will be enabled in %timer% seconds.
+    # Rerolling is disabled when the server starts. When someone joins the server, rerolling is enabled after 15 seconds. This is to allow the world to load first, and to not cause any weird world gen bugs.
+    # Before the 15 seconds is up, there will be a timer showing the countdown. The title of the cooldown will be the above message.
+    # Replace %timer% with the amount of seconds left.
+    enabledmessage: Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll.
+    # When the 15 seconds is up, it will show that message to players.
+    # Replace %required% with the amount of votes required to reroll the map.
     kickmessage: "%sender% wants to reroll the map! Map is now being rerolled. Join back soon!"
     # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
     # Replace %sender% with the final person's decision to reroll the map.
@@ -83,4 +90,17 @@ post:
 debug:
   warnings: true
   # The plugin will warn the console when incoming errors are encountered. If you already know about this, you can disable the warnings by setting this to false.
+  ignoreconfig:
+    # The plugin will automatically edit some values in your files, specifically server.properties and bukkit.yml, to disable spawn protection, nether and end. This is for game balance and performance.
+    # However, you can choose to ignore these checks. I would highly recommend leaving it as is, but it's your decision at the end.
+    spawnprotection:
+      # Spawn protection prevents non-op users from breaking or placing blocks near spawn. The value changes how far the radius of the protection goes, by blocks.
+      ignore: false
+      value: 0
+      # What should be the value of spawn protection. This is ignored if the config is not ignored.
+      # Leave as 0 for the plugin to stop edits of spawn protection entirely.
+    disablenether: false
+    # Self-explanatory, this is disabled to prevent cheaters from hiding out from the lava in the nether.
+    disableend: false
+    # Self-explanatory, this is disabled to stop unnecessary saving of the end, and by extension speeds up the server restarting.
 

@@ -38,6 +38,7 @@ public class core {
                 if (timer[0] <= 0) {
                     bossbar.removeAll();
                     switch (state) {
+                        case "pregame" -> grace.gracesetup();
                         case "grace" -> main.mainsetup();
                         case "post" -> {
                             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -127,7 +128,6 @@ public class core {
         }
         if (!Objects.equals(checkedproperty, correctConfig)) {
             Bukkit.getLogger().severe(attemptMessage);
-            // Writing to file part
             StringBuilder oldcontent = new StringBuilder();
             try {
                 File serverpropfile = new File("server.properties");
@@ -164,6 +164,7 @@ public class core {
             } else {
                 Bukkit.getLogger().severe("bruh no matches in regex wtf");
             }
+            assert neededproperty != null;
             String valueofproperty = neededproperty.substring(neededproperty.lastIndexOf("=") + 1);
             if (!Objects.equals(valueofproperty, correctConfig)) {
                 Bukkit.getLogger().severe(attemptMessage);

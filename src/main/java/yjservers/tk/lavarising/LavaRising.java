@@ -1,8 +1,6 @@
 package yjservers.tk.lavarising;
 
 import org.bukkit.*;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,9 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import static yjservers.tk.lavarising.main.bossbars;
+import static yjservers.tk.lavarising.start.starting;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-public final class LavaRising extends JavaPlugin implements CommandExecutor, Listener {
+public final class LavaRising extends JavaPlugin implements Listener {
 
     static pregame pregame;
     static FileConfiguration config;
@@ -43,8 +41,8 @@ public final class LavaRising extends JavaPlugin implements CommandExecutor, Lis
         }
         this.saveDefaultConfig();
         setupFields();
-        Objects.requireNonNull(this.getCommand("start")).setExecutor(this);
-        Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
+        Objects.requireNonNull(this.getCommand("start")).setExecutor(new start());
+        // Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
         Objects.requireNonNull(this.getCommand("reroll")).setExecutor(new reroll());
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new main(), this);
@@ -54,12 +52,21 @@ public final class LavaRising extends JavaPlugin implements CommandExecutor, Lis
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        core.editServerProperties("spawn-protection", "0", "spawn-protection=\\d+", "spawn-protection=0", "Spawn protection is not set to 0! This will cause building issues to players. Attempting to set to 0.",
-                "Spawn protection should be set to 0.");
-        core.editServerProperties("allow-nether", "false", "allow-nether=true", "allow-nether=false", "Nether is enabled! This will cause cheating as players can go to the nether to escape the lava. Attempting to disable.",
-                "Nether should be disabled.");
-        core.editServerPropertiesYAML(new File("bukkit.yml"), "allow-end=[a-zA-Z]+", "false", "allow-end: true", "allow-end: false", "End is enabled! This causes unnessary delays as the server will attempt to save the end, even though it should not be accessable. Attempting to disable.",
-                 "End should be disabled.");
+        if (!config.getBoolean("debug.ignoreconfig.spawnprotection.ignore")) {
+            core.editServerProperties("spawn-protection", "0", "spawn-protection=\\d+", "spawn-protection=0", "Spawn protection is not set to 0! This will cause building issues to players. Attempting to set to 0.",
+                    "Spawn protection should be set to 0.");
+        } else if (config.getInt("debug.ignoreconfig.spawnprotection.value") != 0) {
+            core.editServerProperties("spawn-protection", String.valueOf(config.getInt("debug.ignoreconfig.spawnprotection.value")), "spawn-protection=\\d+", "spawn-protection=0", "Spawn protection is not set to 0! This will cause building issues to players. Attempting to set to 0.",
+                    "Spawn protection should be set to 0.");
+        }
+        if (!config.getBoolean("debug.ignoreconfig.disablenether")) {
+            core.editServerProperties("allow-nether", "false", "allow-nether=[a-zA-Z]+", "allow-nether=false", "Nether is enabled! This will cause cheating as players can go to the nether to escape the lava. Attempting to disable.",
+                    "Nether should be disabled.");
+        }
+        if (!config.getBoolean("debug.ignoreconfig.disableend")) {
+            core.editServerPropertiesYAML(new File("bukkit.yml"), "allow-end=[a-zA-Z]+", "false", "allow-end: true", "allow-end: false", "End is enabled! This causes unnecessary delays as the server will attempt to save the end, and slow down the server. Attempting to disable.",
+                    "End should be disabled.");
+        }
         core.restartForConfig();
         pregame.createWorld();
         pregame.setupworld();
@@ -82,28 +89,11 @@ public final class LavaRising extends JavaPlugin implements CommandExecutor, Lis
     public void setupFields() {
         plugin = this;
         state = "pregame";
+        starting = false;
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_CRIT);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_STRONG);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_SWEEP);
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (Bukkit.getServer().getOnlinePlayers().size() == 1) {
-                sender.sendMessage("There is not enough players...");
-        } else {
-            sender.sendMessage("Start command received!");
-            core.timer(5, "Starting in %timer% seconds!", BarColor.GREEN, BarStyle.SOLID);
-            BukkitRunnable task = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    yjservers.tk.lavarising.grace.gracesetup();
-                }
-            };
-            task.runTaskLater(this, 100);
-        }
-        return true;
     }
 
     @EventHandler
