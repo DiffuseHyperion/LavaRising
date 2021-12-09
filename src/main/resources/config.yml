@@ -20,7 +20,7 @@ pregame:
     # Before the 15 seconds is up, there will be a timer showing the countdown. The title of the cooldown will be the above message.
     # Replace %timer% with the amount of seconds left.
     enabledmessage: Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll.
-    # When the 15 seconds is up, it will show that message to players.
+    # When the 15 seconds is up, the timer's title will change to the above message.
     # Replace %required% with the amount of votes required to reroll the map.
     kickmessage: "%sender% wants to reroll the map! Map is now being rerolled. Join back soon!"
     # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
