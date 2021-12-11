@@ -31,7 +31,7 @@ pregame:
 grace:
   duration: 60
   # How long will the grace period last. Unit is seconds.
-  finalbordersize: 175
+  finalbordersize: 176
   # How big the border will expand to at the end. Unit is the number of blocks for the border diameter.
   # Keep in mind the amount of blocks needed to be filled by the plugin! 200 will start lagging the server, but it may not depending on your hardware.
   # fawe coming soon, when 1.18 support comes out
@@ -103,4 +103,7 @@ debug:
     # Self-explanatory, this is disabled to prevent cheaters from hiding out from the lava in the nether.
     disableend: false
     # Self-explanatory, this is disabled to stop unnecessary saving of the end, and by extension speeds up the server restarting.
+    allowflight: false
+    # Minecraft's built-in anticheat usually kicks more innocent players than cheaters, and you cannot rejoin during the main phase. Turning this off usually prevent false-positives from the anti-cheat, and improves player experience.
+    # if you really want an anticheat install one from spigot
 

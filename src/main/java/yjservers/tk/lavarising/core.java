@@ -146,6 +146,7 @@ public class core {
                 Bukkit.getLogger().severe(successMessage);
                 requiredtorestart = true;
             } catch (IOException e) {
+                Bukkit.getLogger().severe("Something went wrong while trying to disable " + propertyToCheck + "! Error log below: ");
                 e.printStackTrace();
             }
         }
@@ -162,7 +163,7 @@ public class core {
             if (matcher.find()) {
                 neededproperty = matcher.group(0);
             } else {
-                Bukkit.getLogger().severe("bruh no matches in regex wtf");
+                Bukkit.getLogger().severe("Something went wrong while editing " + filetocheck.getName() + ", This is a plugin issue, please wait for a new update! Inform me in spigot fourms, when i check it lol");
             }
             assert neededproperty != null;
             String valueofproperty = neededproperty.substring(neededproperty.lastIndexOf("=") + 1);
@@ -185,6 +186,7 @@ public class core {
                     Bukkit.getLogger().severe(successMessage);
                     requiredtorestart = true;
                 } catch (IOException e) {
+                    Bukkit.getLogger().severe("Something went wrong while trying to disable " + propertyToCheck + "! Error log below: ");
                     e.printStackTrace();
                 }
             }

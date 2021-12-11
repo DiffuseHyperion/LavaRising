@@ -67,6 +67,10 @@ public final class LavaRising extends JavaPlugin implements Listener {
             core.editServerPropertiesYAML(new File("bukkit.yml"), "allow-end=[a-zA-Z]+", "false", "allow-end: true", "allow-end: false", "End is enabled! This causes unnecessary delays as the server will attempt to save the end, and slow down the server. Attempting to disable.",
                     "End should be disabled.");
         }
+        if (!config.getBoolean("debug.ignoreconfig.allowflight")) {
+            core.editServerProperties("allow-flight", "true", "allow-flight=[a-zA-Z]+", "allow-flight=true", "Minecraft's anticheat is enabled! This usually kicks more legit players than not. Attempting to disable for a more consistent player experience.",
+                    "Anticheat should be disabled. If you want to have an anticheat, download one from spigot or skip this check in config.yml! Do be aware that you need to re-enable the anticheat after disabling the check.");
+        }
         core.restartForConfig();
         pregame.createWorld();
         pregame.setupworld();
