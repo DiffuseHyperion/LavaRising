@@ -34,7 +34,6 @@ grace:
   finalbordersize: 176
   # How big the border will expand to at the end. Unit is the number of blocks for the border diameter.
   # Keep in mind the amount of blocks needed to be filled by the plugin! 200 will start lagging the server, but it may not depending on your hardware.
-  # fawe coming soon, when 1.18 support comes out
   speed: 30
   # How long should it take for the border to expand to its final size. Unit is seconds.
   timername: The game is in the grace period! PVP is off. %timer% seconds left.
