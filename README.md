@@ -1,4 +1,6 @@
-# Lava Rising
+### this was my first plugin and github repo, excuse me for cringe description haha
+
+# LavaRising
 help how to github
 
 mostly did this cuz i could
