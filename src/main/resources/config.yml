@@ -5,29 +5,43 @@
 #         Pre-Game > Grace > Main > Post           #
 #   Overtime (might be skipped)  ^                 #
 ####################################################
+# For all configs with the name 'timername', there is multiple variables that you can add. The game will automatically translate these variables.
+# Special variables for specific configs will be specified.
+# Use %time_left% for the amount of seconds left in the timer.
+# Use %time_elapsed% for the amount of seconds elapsed.
+# Use %players_shown# for all players which can see the timer.
 pregame:
   worldname: world
-  # The name of the world being generated. This should be the same as level-name in your server.properties file.
-  bordersize: 10
-  # The size of the border at the start. Unit is the number of blocks for the border diameter.
+  # The name for the world being generated. This should be the same as level-name in your server.properties file.
+  seed:
+  # The seed for the world being generated. Leave blank to randomly generate a seed. This should only contain numbers.
+
   rerolling:
     enabled: true
     # Allow rerolling of the map by a command.
     percentagetopass: 80
     # How much players need to agree on a reroll to reroll the map.
-    beforemessage: Rerolling of the map will be enabled in %timer% seconds.
+    beforemessage: Rerolling of the map will be enabled in %time_left% seconds.
     # Rerolling is disabled when the server starts. When someone joins the server, rerolling is enabled after 15 seconds. This is to allow the world to load first, and to not cause any weird world gen bugs.
     # Before the 15 seconds is up, there will be a timer showing the countdown. The title of the cooldown will be the above message.
-    # Replace %timer% with the amount of seconds left.
-    enabledmessage: Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll.
+
+    enabledmessage: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
     # When the 15 seconds is up, the timer's title will change to the above message.
     # Replace %required% with the amount of votes required to reroll the map.
+
     kickmessage: "%sender% wants to reroll the map! Map is now being rerolled. Join back soon!"
     # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
     # Replace %sender% with the final person's decision to reroll the map.
-  startcountdown:
-    enabled: true
+
+  start:
+    countdown: true
     # When /start is sent, the plugin will count down a time before starting.
+    timername: "Starting in %time_left% seconds!"
+    # What the countdown timer message will be.
+
+  bordersize: 10
+  # The size for the border at the start. Unit is the number of blocks for the border diameter.
+
 grace:
   duration: 60
   # How long will the grace period last. Unit is seconds.
@@ -36,22 +50,25 @@ grace:
   # Keep in mind the amount of blocks needed to be filled by the plugin! 200 will start lagging the server, but it may not depending on your hardware.
   speed: 30
   # How long should it take for the border to expand to its final size. Unit is seconds.
-  timername: The game is in the grace period! PVP is off. %timer% seconds left.
+
+  timername: The game is in the grace period! PVP is off. %time_left% seconds left.
   # What should the title of the timer be.
-  # Replace the amount of seconds left with %timer%.
+
 main:
-  lavainterval: 5
-  # How fast the lava rises when the lava level is below sea level. Unit is seconds.
   timername: The game is in the main period! Lava is at %level%, you are %distance% blocks away.
   # What should the title of the timer be.
   # Replace %distance% with the distance a player is from the lava y-level.
   # Replace %level% with the lava y-level.
   # (Tip: Include %level% if overtime is enabled to warn players of impending overtime.)
+
+  lavainterval: 5
+  # How fast the lava rises when the lava level is below sea level. Unit is seconds.
   deathmessage: "%original% and is eliminated! %left% players remaining."
   # What the death message should be.
   # Replace the original death message with %replace%.
   # Replace the player who died with %player%.
   # Replace the amount of players left with %left%.
+
 overtime:
   # Lava does not rise during overtime. Game ends when there is one person left alive!
   warning:
@@ -66,38 +83,37 @@ overtime:
   threshold: 305
   # The level of lava needed for the game to be considered to be in overtime.
   # Keep in mind that the build limit is 320 on 1.18, and 255 on <1.18!
+
   finalbordersize: 20
   # How small the border will shrink to. Unit is the number of blocks for the border diameter.
   speed: 120
   # How fast the border will shrink.
   # Make sure the speed is not too fast so that people can see it coming!
+
   bartitle: OVERTIME! Lava is paused. Border will shrink slowly to the middle. Last one alive wins!
   # What the overtime bar name should be.
-  # No placeholders allowed.
+
 post:
   duration: 30
   # How long the server will wait before restarting the server.
+  timername: "%winner% has survived! The server will restart in %time_left% seconds."
+  # What should the title of the timer be.
+  # Replace %winner% with the winner of the game.
+
   creativemode: all
   # (mostly for fun) Who the game will give creative mode to at the end of the game.
   # Accepted values: 'none', 'winner', 'all'
   kickmessage: The game is restarting now. Join back soon!
   # What should be the kick message when the server is restarting.
-  timername: "%winner% has survived! The server will restart in %timer% seconds."
-  # What should the title of the timer be.
-  # Replace %winner% with the winner of the game.
-  # Replace %timer% with the amount of seconds left before server restart.
+
 debug:
   warnings: true
   # The plugin will warn the console when incoming errors are encountered. If you already know about this, you can disable the warnings by setting this to false.
   ignoreconfig:
     # The plugin will automatically edit some values in your files, specifically server.properties and bukkit.yml, to disable spawn protection, nether and end. This is for game balance and performance.
     # However, you can choose to ignore these checks. I would highly recommend leaving it as is, but it's your decision at the end.
-    spawnprotection:
-      # Spawn protection prevents non-op users from breaking or placing blocks near spawn. The value changes how far the radius of the protection goes, by blocks.
-      ignore: false
-      value: 0
-      # What should be the value of spawn protection. This is ignored if the config is not ignored.
-      # Leave as 0 for the plugin to stop edits of spawn protection entirely.
+    disablespawnprotection: false
+    # Spawn protection prevents non-op users from breaking or placing blocks near spawn.
     disablenether: false
     # Self-explanatory, this is disabled to prevent cheaters from hiding out from the lava in the nether.
     disableend: false
@@ -105,4 +121,8 @@ debug:
     allowflight: false
     # Minecraft's built-in anticheat usually kicks more innocent players than cheaters, and you cannot rejoin during the main phase. Turning this off usually prevent false-positives from the anti-cheat, and improves player experience.
     # if you really want an anticheat install one from spigot
-
+  restartsetup:
+  # Attempt to automatically setup server restarting.
+    enabled: false
+    os: Unix
+    jar: spigot-1.17.1.jar

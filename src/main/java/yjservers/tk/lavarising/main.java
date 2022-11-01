@@ -30,7 +30,7 @@ public class main implements Listener {
 
     public static void mainsetup(){
         state = "main";
-        core.playSound(Sound.ENTITY_WITHER_AMBIENT);
+        gm.GamePlayer.playSoundToAll(Sound.ENTITY_WITHER_AMBIENT);
         world.setPVP(true);
         if (Bukkit.getServer().getClass().getPackage().getName().contains("1_18")) {
             Bukkit.getLogger().info("Detected version 1.18! Lava starts at -63.");
@@ -46,7 +46,7 @@ public class main implements Listener {
             @Override
             public void run() {
                 if (timer[0] >= config.getInt("main.lavainterval")) {
-                    core.fillBlocks(new Location(world, -coords, lavaheight, -coords), new Location(world, coords, lavaheight, coords), Material.LAVA);
+                    gm.GameWorld.fillBlocks(new Location(world, -coords, lavaheight, -coords), new Location(world, coords, lavaheight, coords), Material.LAVA);
                     lavaheight++;
                     timer[0] = 0;
                 }

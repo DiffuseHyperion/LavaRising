@@ -17,7 +17,7 @@ import static yjservers.tk.lavarising.LavaRising.*;
 
 public class overtime {
     public static void overtime(){
-        core.playSound(Sound.ITEM_TOTEM_USE);
+        gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
         state = "overtime";
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
         BossBar bossbar = Bukkit.createBossBar(config.getString("overtime.bartitle"), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);

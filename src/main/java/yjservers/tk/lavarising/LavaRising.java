@@ -4,6 +4,7 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,33 +14,38 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import tk.yjservers.gamemaster.GameMaster;
+import tk.yjservers.gamemaster.GameServer;
 
 import static yjservers.tk.lavarising.main.bossbars;
 import static yjservers.tk.lavarising.start.starting;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 public final class LavaRising extends JavaPlugin implements Listener {
-
-    static pregame pregame;
     static FileConfiguration config;
     static World world;
     static String state;
     static Plugin plugin;
-    static CountDownLatch waitforworld;
-
+    public static GameMaster gm;
     ArrayList<Sound> attacksounds = new ArrayList<>();
 
     @Override
     public void onEnable() {
+        this.saveDefaultConfig();
+        config = this.getConfig();
+        gm = (GameMaster) getServer().getPluginManager().getPlugin("GameMaster");
+        assert gm != null;
+
         if (config.getBoolean("debug.warnings")) {
             getLogger().warning("Yes, I know about the warns from bukkit about missing files, but its to be expected, and doesn't affect anything. Sorry for cluttering up your logs lol");
         }
-        this.saveDefaultConfig();
+
         setupFields();
         Objects.requireNonNull(this.getCommand("start")).setExecutor(new start());
         // Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
@@ -47,33 +53,32 @@ public final class LavaRising extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new main(), this);
         getServer().getPluginManager().registerEvents(new reroll(), this);
+
+        boolean requireResetConfig;
+        boolean requireResetRestart = false;
         try {
-            waitforworld.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            requireResetConfig = gm.GameServer.checkForServerProperties(config.getBoolean("debug.ignoreconfig.disablespawnprotection"),
+                    config.getBoolean("debug.ignoreconfig.disablenether"),
+                    config.getBoolean("debug.ignoreconfig.disableend"),
+                    config.getBoolean("debug.ignoreconfig.allowflight"));
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
         }
-        if (!config.getBoolean("debug.ignoreconfig.spawnprotection.ignore")) {
-            core.editServerProperties("spawn-protection", "0", "spawn-protection=\\d+", "spawn-protection=0", "Spawn protection is not set to 0! This will cause building issues to players. Attempting to set to 0.",
-                    "Spawn protection should be set to 0.");
-        } else if (config.getInt("debug.ignoreconfig.spawnprotection.value") != 0) {
-            core.editServerProperties("spawn-protection", String.valueOf(config.getInt("debug.ignoreconfig.spawnprotection.value")), "spawn-protection=\\d+", "spawn-protection=0", "Spawn protection is not set to 0! This will cause building issues to players. Attempting to set to 0.",
-                    "Spawn protection should be set to 0.");
+        if (config.getBoolean("debug.restartsetup.enabled")) {
+            try {
+                requireResetRestart = gm.GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartsetup.os", gm.GameServer.getOS().toString())),
+                        config.getString("debug.restartsetup.jar", gm.GameServer.getServerJar().toString()));
+            } catch (IOException | InvalidConfigurationException e) {
+                throw new RuntimeException(e);
+            }
         }
-        if (!config.getBoolean("debug.ignoreconfig.disablenether")) {
-            core.editServerProperties("allow-nether", "false", "allow-nether=[a-zA-Z]+", "allow-nether=false", "Nether is enabled! This will cause cheating as players can go to the nether to escape the lava. Attempting to disable.",
-                    "Nether should be disabled.");
+
+        if (requireResetConfig || requireResetRestart) {
+            gm.GameServer.restart();
         }
-        if (!config.getBoolean("debug.ignoreconfig.disableend")) {
-            core.editServerPropertiesYAML(new File("bukkit.yml"), "allow-end=[a-zA-Z]+", "false", "allow-end: true", "allow-end: false", "End is enabled! This causes unnecessary delays as the server will attempt to save the end, and slow down the server. Attempting to disable.",
-                    "End should be disabled.");
-        }
-        if (!config.getBoolean("debug.ignoreconfig.allowflight")) {
-            core.editServerProperties("allow-flight", "true", "allow-flight=[a-zA-Z]+", "allow-flight=true", "Minecraft's anticheat is enabled! This usually kicks more legit players than not. Attempting to disable for a more consistent player experience.",
-                    "Anticheat should be disabled. If you want to have an anticheat, download one from spigot or skip this check in config.yml! Do be aware that you need to re-enable the anticheat after disabling the check.");
-        }
-        core.restartForConfig();
-        pregame.createWorld();
-        pregame.setupworld();
+
+        world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
+        gm.GameWorld.setupWorld(world, false, config.getDouble("pregame.bordersize"), 0, 0, 0);
     }
 
     @Override
@@ -127,16 +132,13 @@ public final class LavaRising extends JavaPlugin implements Listener {
                 bossbars.remove(player);
                 event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
                         .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(bossbars.size())));
-                core.playSound(attacksounds.get(new Random().nextInt(4)));
+                gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
             }
         }
     }
 
     public void onLoad() {
-        waitforworld = new CountDownLatch(1);
-        config = this.getConfig();
-        pregame = new pregame();
-        pregame.deleteWorld();
+        gm.GameWorld.deleteWorld(config.getString("pregame.worldname"));
     }
 
 }

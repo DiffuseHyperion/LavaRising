@@ -6,6 +6,10 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import static yjservers.tk.lavarising.LavaRising.config;
+import static yjservers.tk.lavarising.LavaRising.gm;
 
 public class start implements CommandExecutor {
 
@@ -18,7 +22,16 @@ public class start implements CommandExecutor {
         } else {
             starting = true;
             sender.sendMessage("Start command received!");
-            core.timer(5, "Starting in %timer% seconds!", BarColor.GREEN, BarStyle.SOLID);
+            if (config.getBoolean("pregame.start.countdown")) {
+                gm.GamePlayer.timer(5, config.getString("pregame.start.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        grace.gracesetup();
+                    }
+                });
+            } else {
+                grace.gracesetup();
+            }
         }
         return true;
     }

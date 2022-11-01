@@ -8,10 +8,9 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import static yjservers.tk.lavarising.LavaRising.world;
-import static yjservers.tk.lavarising.LavaRising.config;
-import static yjservers.tk.lavarising.LavaRising.state;
+import static yjservers.tk.lavarising.LavaRising.*;
 
 
 public class grace {
@@ -33,7 +32,12 @@ public class grace {
         WorldBorder border = world.getWorldBorder();
         border.setSize(config.getDouble("grace.finalbordersize"), config.getLong("grace.speed"));
         border.setWarningDistance(0);
-        yjservers.tk.lavarising.core.timer(config.getInt("grace.duration"), config.getString("grace.timername"), BarColor.GREEN, BarStyle.SOLID);
-        core.playSound(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
+        gm.GamePlayer.timer(config.getInt("grace.duration"), config.getString("grace.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
+            @Override
+            public void run() {
+                main.mainsetup();
+            }
+        });
+        gm.GamePlayer.playSoundToAll(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
     }
 }
