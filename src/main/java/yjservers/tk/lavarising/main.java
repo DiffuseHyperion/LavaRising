@@ -99,7 +99,7 @@ public class main implements Listener {
     }
 
     public static void overtimewarning() {
-        BossBar bossbar = Bukkit.createBossBar(config.getString("overtime.warning.message").replace("%threshold%", String.valueOf(config.getInt("overtime.threshold"))), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
+        BossBar bossbar = Bukkit.createBossBar(Objects.requireNonNull(config.getString("overtime.warning.message")).replace("%threshold%", String.valueOf(config.getInt("overtime.threshold"))), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
         for (Player p : Bukkit.getOnlinePlayers()) {
             bossbar.addPlayer(p);
         }
