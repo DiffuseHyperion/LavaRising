@@ -27,7 +27,7 @@ public class main implements Listener {
     static Player winner;
     static double[] timer;
 
-    public static void mainsetup(){
+    public void triggerMain(){
         LavaRising.state = "main";
         LavaRising.gm.GamePlayer.playSoundToAll(Sound.ENTITY_WITHER_AMBIENT);
         LavaRising.world.setPVP(true);
@@ -50,7 +50,7 @@ public class main implements Listener {
                     timer[0] = 0;
                 }
                 if (lavaheight >= LavaRising.config.getInt("overtime.threshold")) {
-                    overtime.overtime();
+                    new overtime().triggerOvertime();
                     this.cancel();
                 }
                 if (Objects.equals(LavaRising.state, "post")) {
@@ -74,7 +74,7 @@ public class main implements Listener {
             bossbars.remove(event.getEntity());
             if (bossbars.size() == 1) {
                 winner = (Player) bossbars.keySet().toArray()[0];
-                post.post();
+                new post().triggerPost();
             }
         }
     }

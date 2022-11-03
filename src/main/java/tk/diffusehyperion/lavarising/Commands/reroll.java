@@ -96,6 +96,11 @@ public class reroll implements CommandExecutor, Listener {
         } else if (Objects.equals(state, "pregame")) {
             Player p = event.getPlayer();
             if (allowedtoreroll) {
+                requiredplayers = BigDecimal.valueOf(config.getInt("pregame.rerolling.percentagetopass")).multiply(BigDecimal.valueOf(Bukkit.getOnlinePlayers().size())).divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN).intValue();
+                if (requiredplayers == 0) {
+                    requiredplayers = 1;
+                }
+                rerollBossbar2.setTitle(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredplayers)));
                 rerollBossbar2.addPlayer(p);
             } else {
                 rerollBossbar1.addPlayer(p);

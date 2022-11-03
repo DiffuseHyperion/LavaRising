@@ -8,7 +8,6 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
@@ -16,13 +15,7 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class grace {
 
-    static Plugin plugin;
-
-    public grace() {
-        plugin = (Plugin) this;
-    }
-
-    public static void gracesetup(){
+    public void triggerGrace(){
         state = "grace";
         for (Player p: Bukkit.getOnlinePlayers()) {
             p.setGameMode(GameMode.SURVIVAL);
@@ -36,7 +29,7 @@ public class grace {
         BossBar bossbar = gm.GamePlayer.timer(config.getInt("grace.duration"), config.getString("grace.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
             @Override
             public void run() {
-                main.mainsetup();
+                new main().triggerMain();
             }
         }).getValue0();
         for (Player p : Bukkit.getOnlinePlayers()) {

@@ -16,7 +16,7 @@ import java.util.Objects;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class overtime {
-    public static void overtime(){
+    public void triggerOvertime(){
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
         state = "overtime";
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));

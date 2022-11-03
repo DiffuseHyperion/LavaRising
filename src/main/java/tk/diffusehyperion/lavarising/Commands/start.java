@@ -14,6 +14,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 import static tk.diffusehyperion.lavarising.Commands.reroll.*;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
@@ -30,21 +32,25 @@ public class start implements CommandExecutor, Listener {
         } else {
             starting = true;
             sender.sendMessage("Start command received!");
-            rerollBossbar1.removeAll();
-            rerollTask1.cancel();
-            rerollBossbar2.removeAll();
+            if (!Objects.isNull(rerollBossbar1)) {
+                rerollBossbar1.removeAll();
+                rerollTask1.cancel();
+            }
+            if (!Objects.isNull(rerollBossbar2)) {
+                rerollBossbar2.removeAll();
+            }
             if (config.getBoolean("pregame.start.countdown")) {
                 bossbar = gm.GamePlayer.timer(5, config.getString("pregame.start.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
                     @Override
                     public void run() {
-                        grace.gracesetup();
+                        new grace().triggerGrace();
                     }
                 }).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     bossbar.addPlayer(p);
                 }
             } else {
-                grace.gracesetup();
+                new grace().triggerGrace();
             }
         }
         return true;
