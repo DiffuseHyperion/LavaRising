@@ -1,8 +1,10 @@
 name: LavaRising
 version: '${project.version}'
-main: yjservers.tk.lavarising.LavaRising
+main: tk.diffusehyperion.lavarising.LavaRising
 api-version: 1.19
 description: i lost my previous plugin files lmfao
+depend:
+  - GameMaster
 commands:
   start:
     description: Starts the game.

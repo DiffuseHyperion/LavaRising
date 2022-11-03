@@ -1,9 +1,8 @@
-package yjservers.tk.lavarising;
+package tk.diffusehyperion.lavarising;
 
+import tk.diffusehyperion.lavarising.Commands.reroll;
+import tk.diffusehyperion.lavarising.Commands.start;
 import org.bukkit.*;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,22 +15,20 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.yjservers.gamemaster.GameMaster;
 import tk.yjservers.gamemaster.GameServer;
+import tk.diffusehyperion.lavarising.States.main;
 
-import static yjservers.tk.lavarising.main.bossbars;
-import static yjservers.tk.lavarising.start.starting;
+import static tk.diffusehyperion.lavarising.States.main.bossbars;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 public final class LavaRising extends JavaPlugin implements Listener {
-    static FileConfiguration config;
-    static World world;
-    static String state;
-    static Plugin plugin;
+    public static FileConfiguration config;
+    public static World world;
+    public static String state;
+    public static Plugin plugin;
     public static GameMaster gm;
     ArrayList<Sound> attacksounds = new ArrayList<>();
 
@@ -39,8 +36,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onEnable() {
         this.saveDefaultConfig();
         config = this.getConfig();
-        gm = (GameMaster) getServer().getPluginManager().getPlugin("GameMaster");
-        assert gm != null;
 
         if (config.getBoolean("debug.warnings")) {
             getLogger().warning("Yes, I know about the warns from bukkit about missing files, but its to be expected, and doesn't affect anything. Sorry for cluttering up your logs lol");
@@ -53,6 +48,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new main(), this);
         getServer().getPluginManager().registerEvents(new reroll(), this);
+        getServer().getPluginManager().registerEvents(new start(), this);
 
         boolean requireResetConfig;
         boolean requireResetRestart = false;
@@ -78,7 +74,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
         }
 
         world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
-        gm.GameWorld.setupWorld(world, false, config.getDouble("pregame.bordersize"), 0, 0, 0);
+        gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
     }
 
     @Override
@@ -98,7 +94,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void setupFields() {
         plugin = this;
         state = "pregame";
-        starting = false;
+        start.starting = false;
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_CRIT);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_STRONG);
@@ -138,7 +134,13 @@ public final class LavaRising extends JavaPlugin implements Listener {
     }
 
     public void onLoad() {
-        gm.GameWorld.deleteWorld(config.getString("pregame.worldname"));
+        gm = (GameMaster) getServer().getPluginManager().getPlugin("GameMaster");
+        assert gm != null;
+        try {
+            gm.GameWorld.deleteWorld();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

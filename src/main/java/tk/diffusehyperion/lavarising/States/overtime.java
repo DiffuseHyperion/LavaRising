@@ -1,4 +1,4 @@
-package yjservers.tk.lavarising;
+package tk.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-import static yjservers.tk.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class overtime {
     public static void overtime(){

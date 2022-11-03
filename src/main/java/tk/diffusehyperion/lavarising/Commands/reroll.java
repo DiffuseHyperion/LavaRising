@@ -1,4 +1,4 @@
-package yjservers.tk.lavarising;
+package tk.diffusehyperion.lavarising.Commands;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -14,14 +14,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.javatuples.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static yjservers.tk.lavarising.LavaRising.*;
-import static yjservers.tk.lavarising.start.starting;
+import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.Commands.start.starting;
 
 public class reroll implements CommandExecutor, Listener {
 
@@ -30,7 +31,10 @@ public class reroll implements CommandExecutor, Listener {
     ArrayList<Player> agreedlist = new ArrayList<>();
     static boolean allowedtoreroll = false;
     static boolean someonejoinedbefore = false;
-    static BossBar rerollbossbar;
+
+    public static BossBar rerollBossbar1;
+    public static BukkitRunnable rerollTask1;
+    public static BossBar rerollBossbar2;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -67,40 +71,35 @@ public class reroll implements CommandExecutor, Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!(someonejoinedbefore)) {
+        if (!someonejoinedbefore) {
             someonejoinedbefore = true;
-            String bossbartitle = config.getString("pregame.rerolling.beforemessage");
-            assert false;
-            rerollbossbar = Bukkit.createBossBar(bossbartitle, BarColor.YELLOW, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
-            double[] timer = {15};
-            BukkitRunnable bossbartimer = new BukkitRunnable() {
+            Pair<BossBar, BukkitRunnable> pair = gm.GamePlayer.timer(15, config.getString("pregame.rerolling.beforemessage"), BarColor.YELLOW, BarStyle.SOLID, new BukkitRunnable() {
                 @Override
                 public void run() {
-                    rerollbossbar.setTitle(bossbartitle.replace("%timer%", String.valueOf(timer[0])));
-                    rerollbossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(15), 5, RoundingMode.HALF_EVEN).doubleValue());
-                    if (!(timer[0] <= 0)) {
-                        timer[0] = BigDecimal.valueOf(timer[0]).subtract(BigDecimal.valueOf(0.1)).doubleValue();
+                    requiredplayers = BigDecimal.valueOf(config.getInt("pregame.rerolling.percentagetopass")).multiply(BigDecimal.valueOf(Bukkit.getOnlinePlayers().size())).divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN).intValue();
+                    if (requiredplayers == 0) {
+                        requiredplayers = 1;
                     }
-                    if (timer[0] <= 0) {
-                        requiredplayers = BigDecimal.valueOf(config.getInt("pregame.rerolling.percentagetopass")).multiply(BigDecimal.valueOf(Bukkit.getOnlinePlayers().size())).divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN).intValue();
-                        if (requiredplayers == 0) {
-                            requiredplayers = 1;
-                        }
-                        allowedtoreroll = true;
-                        rerollbossbar.setTitle(config.getString("pregame.rerolling.enabledmessage").replace("%required%", String.valueOf(requiredplayers)));
-                        rerollbossbar.setProgress(1);
-                        if (starting) {
-                            rerollbossbar.removeAll();
-                            this.cancel();
-                        }
+
+                    rerollBossbar2 = Bukkit.createBossBar(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredplayers)),
+                            BarColor.YELLOW, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
+                    rerollBossbar2.setProgress(1);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        rerollBossbar2.addPlayer(p);
                     }
+                    allowedtoreroll = true;
                 }
-            };
-            bossbartimer.runTaskTimer(plugin, 0, 2);
-            rerollbossbar.addPlayer(event.getPlayer());
+            });
+            rerollBossbar1 = pair.getValue0();
+            rerollTask1 = pair.getValue1();
+            rerollBossbar1.addPlayer(event.getPlayer());
         } else if (Objects.equals(state, "pregame")) {
-            assert false;
-            rerollbossbar.addPlayer(event.getPlayer());
+            Player p = event.getPlayer();
+            if (allowedtoreroll) {
+                rerollBossbar2.addPlayer(p);
+            } else {
+                rerollBossbar1.addPlayer(p);
+            }
         }
     }
 }
