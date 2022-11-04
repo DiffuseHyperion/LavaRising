@@ -13,8 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.yjservers.gamemaster.GameMaster;
-import tk.yjservers.gamemaster.GameServer;
+import tk.diffusehyperion.gamemaster.GameMaster;
+import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.lavarising.States.main;
 
 import static tk.diffusehyperion.lavarising.States.main.bossbars;
