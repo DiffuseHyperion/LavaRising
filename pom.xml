@@ -6,7 +6,7 @@
 
     <groupId>tk.diffusehyperion</groupId>
     <artifactId>LavaRising</artifactId>
-    <version>2.1.0-1.12.2</version>
+    <version>2.1.0-1.13</version>
     <packaging>jar</packaging>
 
     <name>LavaRising</name>
@@ -80,13 +80,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>tk.diffusehyperion</groupId>
             <artifactId>GameMaster</artifactId>
-            <version>1.0.0-1.12</version>
+            <version>1.0.0-1.13</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

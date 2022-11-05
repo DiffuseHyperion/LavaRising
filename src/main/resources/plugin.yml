@@ -1,8 +1,8 @@
 name: LavaRising
 version: '${project.version}'
 main: tk.diffusehyperion.lavarising.LavaRising
-api-version: 1.12
-description: i lost my previous plugin files lmfao
+api-version: 1.13
+description: average lava rising plugin
 depend:
   - GameMaster
 commands:
