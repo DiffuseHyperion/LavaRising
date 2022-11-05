@@ -35,6 +35,6 @@ public class grace {
         for (Player p : Bukkit.getOnlinePlayers()) {
             bossbar.addPlayer(p);
         }
-        gm.GamePlayer.playSoundToAll(Sound.ENTITY_ENDERDRAGON_AMBIENT);
+        gm.GamePlayer.playSoundToAll(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
     }
 }
