@@ -84,9 +84,7 @@ public class main implements Listener {
                     barLib.clearBossbar(player);
                     this.cancel();
                 }
-                //float percentage = BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("main.lavainterval")), 2, RoundingMode.HALF_EVEN).floatValue();
-                //bossbar.setPercentage(percentage);
-                // percentage seems to be really buggy and weird, disabled for now
+                bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("main.lavainterval")), 2, RoundingMode.HALF_EVEN).floatValue());
             }
         };
         task.runTaskTimer(LavaRising.plugin, 0, 20);

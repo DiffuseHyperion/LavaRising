@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.lavarising.States.grace;
 
+import java.util.Objects;
+
 import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnabledBossbars;
 import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnablingBossbars;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
@@ -38,6 +40,13 @@ public class start implements CommandExecutor, Listener {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     createStartingBossbar(p);
                 }
+                BukkitRunnable startGrace = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        new grace().triggerGrace();
+                    }
+                };
+                startGrace.runTaskLater(plugin, 5 * 20);
             } else {
                 new grace().triggerGrace();
             }
@@ -50,18 +59,14 @@ public class start implements CommandExecutor, Listener {
         if (starting) {
             createStartingBossbar(e.getPlayer());
         }
+        if (Objects.equals(state, "pregame")) {
+            e.getPlayer().teleport(world.getSpawnLocation());
+            //spawnradius does not exist in 1.8
+        }
     }
 
     private void createStartingBossbar(Player p) {
         gm.GamePlayer.timer(p, 5, config.getString("pregame.start.timername"));
-
-        BukkitRunnable startGrace = new BukkitRunnable() {
-            @Override
-            public void run() {
-                new grace().triggerGrace();
-            }
-        };
-        startGrace.runTaskLater(plugin, 5 * 20);
     }
 
 }
