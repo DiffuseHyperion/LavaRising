@@ -49,7 +49,6 @@ public class main implements Listener {
                     this.cancel();
                 }
                 timer[0] += 1;
-                Bukkit.broadcastMessage("triggered, lavaHeight: " + lavaheight + ", timer[0]: " + timer[0]);
             }
         };
         lavariser.runTaskTimer(LavaRising.plugin,0, 20);
