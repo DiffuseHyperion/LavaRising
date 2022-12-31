@@ -31,8 +31,10 @@ public class main implements Listener {
         LavaRising.state = "main";
         LavaRising.gm.GamePlayer.playSoundToAll(Sound.ENTITY_WITHER_AMBIENT);
         LavaRising.world.setPVP(true);
-        if (Bukkit.getServer().getClass().getPackage().getName().contains("1_18")) {
-            Bukkit.getLogger().info("Detected version 1.18! Lava starts at -63.");
+        String version = Bukkit.getBukkitVersion();
+        int minorVersion = Integer.parseInt(version.substring(version.indexOf(".") + 1, version.indexOf(".") + 3));
+        if (minorVersion >= 18) {
+            Bukkit.getLogger().info("Detected version >=1.18! Lava starts at -63.");
             lavaheight = -63;
         } else {
             Bukkit.getLogger().info("Detected version <1.18! Lava starts at -1.");
