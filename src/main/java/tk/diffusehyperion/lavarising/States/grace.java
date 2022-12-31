@@ -4,9 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -26,15 +23,14 @@ public class grace {
         WorldBorder border = world.getWorldBorder();
         border.setSize(config.getDouble("grace.finalbordersize"), config.getLong("grace.speed"));
         border.setWarningDistance(0);
-        BossBar bossbar = gm.GamePlayer.timer(config.getInt("grace.duration"), config.getString("grace.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
-            @Override
-            public void run() {
-                new main().triggerMain();
-            }
-        }).getValue0();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            bossbar.addPlayer(p);
+            gm.GamePlayer.timer(p, config.getInt("grace.duration"), config.getString("grace.timername"), new BukkitRunnable() {
+                @Override
+                public void run() {
+                    new main().triggerMain();
+                }
+            });
         }
-        gm.GamePlayer.playSoundToAll(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
+        gm.GamePlayer.playSoundToAll(Sound.ENDERDRAGON_GROWL);
     }
 }

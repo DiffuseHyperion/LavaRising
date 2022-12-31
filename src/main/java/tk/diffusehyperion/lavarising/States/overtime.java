@@ -1,11 +1,8 @@
 package tk.diffusehyperion.lavarising.States;
 
+import me.tigerhix.lib.bossbar.Bossbar;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -17,27 +14,27 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class overtime {
     public void triggerOvertime(){
-        gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
+        gm.GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
         state = "overtime";
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
-        BossBar bossbar = Bukkit.createBossBar(config.getString("overtime.bartitle"), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            bossbar.addPlayer(p);
+            Bossbar bossbar = barLib.getBossbar(p);
+            bossbar.setMessage(config.getString("overtime.bartitle"));
+            double[] timer = {0};
+            BukkitRunnable task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (timer[0] != config.getInt("overtime.speed")) {
+                        timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
+                    }
+                    bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("overtime.speed")), 2, RoundingMode.HALF_EVEN).floatValue());
+                    if (Objects.equals(state, "post")) {
+                        barLib.clearBossbar(p);
+                        this.cancel();
+                    }
+                }
+            };
+            task.runTaskTimer(plugin, 0, 2);
         }
-        double[] timer = {0};
-        BukkitRunnable task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (timer[0] != config.getInt("overtime.speed")) {
-                    timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
-                }
-                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
-                if (Objects.equals(state, "post")) {
-                    bossbar.removeAll();
-                    this.cancel();
-                }
-            }
-        };
-        task.runTaskTimer(plugin, 0, 2);
     }
 }

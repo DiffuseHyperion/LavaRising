@@ -6,7 +6,7 @@
 
     <groupId>tk.diffusehyperion</groupId>
     <artifactId>LavaRising</artifactId>
-    <version>2.1.0-1.13</version>
+    <version>2.1.0-1.8</version>
     <packaging>jar</packaging>
 
     <name>LavaRising</name>
@@ -55,6 +55,10 @@
 
     <repositories>
         <repository>
+            <id>gdiffusehyperion-repo</id>
+            <url>https://github.com/DiffuseHyperion/GameMaster/raw/repository</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -62,31 +66,19 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>diffusehyperion-github-repo</id>
-            <url>https://raw.githubusercontent.com/DiffuseHyperion/maven-repository/master/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>tk.diffusehyperion</groupId>
             <artifactId>GameMaster</artifactId>
-            <version>1.0.0-1.13</version>
+            <version>1.0.0-1.8</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

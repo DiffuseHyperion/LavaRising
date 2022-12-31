@@ -1,29 +1,24 @@
 package tk.diffusehyperion.lavarising.Commands;
 
-import org.bukkit.boss.BossBar;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import tk.diffusehyperion.lavarising.States.grace;
-import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
+import tk.diffusehyperion.lavarising.States.grace;
 
-import java.util.Objects;
-
-import static tk.diffusehyperion.lavarising.Commands.reroll.*;
+import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnabledBossbars;
+import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnablingBossbars;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 
 public class start implements CommandExecutor, Listener {
 
     public static boolean starting;
-    static BossBar bossbar;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
@@ -32,22 +27,16 @@ public class start implements CommandExecutor, Listener {
         } else {
             starting = true;
             sender.sendMessage("Start command received!");
-            if (!Objects.isNull(rerollBossbar1)) {
-                rerollBossbar1.removeAll();
-                rerollTask1.cancel();
+            for (Player p : rerollEnablingBossbars.keySet()) {
+                barLib.clearBossbar(p);
+                rerollEnablingBossbars.get(p).getValue1().cancel();
             }
-            if (!Objects.isNull(rerollBossbar2)) {
-                rerollBossbar2.removeAll();
+            for (Player p : rerollEnabledBossbars.keySet()) {
+                barLib.clearBossbar(p);
             }
             if (config.getBoolean("pregame.start.countdown")) {
-                bossbar = gm.GamePlayer.timer(5, config.getString("pregame.start.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        new grace().triggerGrace();
-                    }
-                }).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    bossbar.addPlayer(p);
+                    createStartingBossbar(p);
                 }
             } else {
                 new grace().triggerGrace();
@@ -59,8 +48,17 @@ public class start implements CommandExecutor, Listener {
     @EventHandler
     public void playerJoin(PlayerJoinEvent e) {
         if (starting) {
-            bossbar.addPlayer(e.getPlayer());
+            createStartingBossbar(e.getPlayer());
         }
+    }
+
+    private void createStartingBossbar(Player p) {
+        gm.GamePlayer.timer(p, 5, config.getString("pregame.start.timername"), new BukkitRunnable() {
+            @Override
+            public void run() {
+                new grace().triggerGrace();
+            }
+        });
     }
 
 }

@@ -1,5 +1,6 @@
 package tk.diffusehyperion.lavarising;
 
+import me.tigerhix.lib.bossbar.BossbarLib;
 import tk.diffusehyperion.lavarising.Commands.reroll;
 import tk.diffusehyperion.lavarising.Commands.start;
 import org.bukkit.*;
@@ -30,6 +31,8 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public static String state;
     public static Plugin plugin;
     public static GameMaster gm;
+
+    public static BossbarLib barLib;
     ArrayList<Sound> attacksounds = new ArrayList<>();
 
     @Override
@@ -75,6 +78,8 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
         world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
         gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
+
+        barLib = BossbarLib.createFor(this);
     }
 
     @Override
@@ -95,10 +100,11 @@ public final class LavaRising extends JavaPlugin implements Listener {
         plugin = this;
         state = "pregame";
         start.starting = false;
-        attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_CRIT);
-        attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK);
-        attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_STRONG);
-        attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_SWEEP);
+        attacksounds.add(Sound.SUCCESSFUL_HIT);
+        attacksounds.add(Sound.WITHER_SHOOT);
+        attacksounds.add(Sound.EXPLODE);
+        attacksounds.add(Sound.ANVIL_LAND);
+        attacksounds.add(Sound.AMBIENCE_THUNDER);
     }
 
     @EventHandler

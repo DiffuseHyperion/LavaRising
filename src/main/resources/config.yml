@@ -24,6 +24,7 @@ pregame:
     beforemessage: Rerolling of the map will be enabled in %time_left% seconds.
     # Rerolling is disabled when the server starts. When someone joins the server, rerolling is enabled after 15 seconds. This is to allow the world to load first, and to not cause any weird world gen bugs.
     # Before the 15 seconds is up, there will be a timer showing the countdown. The title of the cooldown will be the above message.
+    rerolltimer: 15
 
     enabledmessage: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
     # When the 15 seconds is up, the timer's title will change to the above message.
