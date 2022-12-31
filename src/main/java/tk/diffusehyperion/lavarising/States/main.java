@@ -24,20 +24,14 @@ public class main implements Listener {
     public static HashMap<Player, Bossbar> bossbars = new HashMap<>();
     public static int lavaheight;
     public static Player winner;
-    public static double[] timer;
+    public static int[] timer;
 
     public void triggerMain(){
         LavaRising.state = "main";
         LavaRising.gm.GamePlayer.playSoundToAll(Sound.WITHER_IDLE);
         LavaRising.world.setPVP(true);
-        if (Bukkit.getServer().getClass().getPackage().getName().contains("1_18")) {
-            Bukkit.getLogger().info("Detected version 1.18! Lava starts at -63.");
-            lavaheight = -63;
-        } else {
-            Bukkit.getLogger().info("Detected version <1.18! Lava starts at -1.");
-            lavaheight = 1;
-        }
-        timer = new double[]{0};
+        lavaheight = 1;
+        timer = new int[]{0};
         int bordersize = (int) LavaRising.world.getWorldBorder().getSize();
         int coords = BigDecimal.valueOf(bordersize).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
         BukkitRunnable lavariser = new BukkitRunnable() {
@@ -55,10 +49,10 @@ public class main implements Listener {
                 if (Objects.equals(LavaRising.state, "post")) {
                     this.cancel();
                 }
-                timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
+                timer[0] += 1;
             }
         };
-        lavariser.runTaskTimer(LavaRising.plugin,0, 2);
+        lavariser.runTaskTimer(LavaRising.plugin,0, 20);
         for (Player p : Bukkit.getOnlinePlayers()) {
             mainTimer(p);
         }
@@ -81,8 +75,7 @@ public class main implements Listener {
     public void mainTimer(Player player) {
         Bossbar bossbar = barLib.getBossbar(player);
         bossbar.setMessage(LavaRising.config.getString("main.timername"));
-
-        bossbars.put(player, bossbar);
+        bossbar.setPercentage(1);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
@@ -91,10 +84,13 @@ public class main implements Listener {
                     barLib.clearBossbar(player);
                     this.cancel();
                 }
-                bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("main.lavainterval")), 2, RoundingMode.HALF_EVEN).floatValue());
+                //float percentage = BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("main.lavainterval")), 2, RoundingMode.HALF_EVEN).floatValue();
+                //bossbar.setPercentage(percentage);
+                // percentage seems to be really buggy and weird, disabled for now
             }
         };
-        task.runTaskTimer(LavaRising.plugin, 0, 2);
+        task.runTaskTimer(LavaRising.plugin, 0, 20);
+        bossbars.put(player, bossbar);
     }
 
     public void overtimewarning() {
@@ -113,7 +109,7 @@ public class main implements Listener {
                     }
                 }
             };
-            task.runTaskTimer(LavaRising.plugin, 0, 2);
+            task.runTaskTimer(LavaRising.plugin, 0, 20);
         }
     }
 }

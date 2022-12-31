@@ -40,10 +40,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         config = this.getConfig();
 
-        if (config.getBoolean("debug.warnings")) {
-            getLogger().warning("Yes, I know about the warns from bukkit about missing files, but its to be expected, and doesn't affect anything. Sorry for cluttering up your logs lol");
-        }
-
         setupFields();
         Objects.requireNonNull(this.getCommand("start")).setExecutor(new start());
         // Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
@@ -79,21 +75,15 @@ public final class LavaRising extends JavaPlugin implements Listener {
         world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
         gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
 
-        barLib = BossbarLib.createFor(this);
+        barLib = BossbarLib.createFor(this, 2);
     }
 
     @Override
     public void onDisable() {
-        if (config.getBoolean("debug.warnings")) {
-            getLogger().warning("If people are kicked from the server closing, minecraft will complain about being unable to save their data. This is fine, and should be disregarded.");
-        }
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-        if (config.getBoolean("debug.warnings")) {
-            getLogger().warning("Below this line (unless there are other plugins), minecraft will complain about not being able to save the leaving person's data. This is ok, and can be ignored.");
-        }
     }
 
     public void setupFields() {
