@@ -41,8 +41,7 @@ public class main implements Listener {
             lavaheight = 1;
         }
         timer = new double[]{0};
-        int bordersize = (int) LavaRising.world.getWorldBorder().getSize();
-        int coords = BigDecimal.valueOf(bordersize).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
+        int coords = BigDecimal.valueOf(LavaRising.config.getInt("grace.finalbordersize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
         BukkitRunnable lavariser = new BukkitRunnable() {
             @Override
             public void run() {
