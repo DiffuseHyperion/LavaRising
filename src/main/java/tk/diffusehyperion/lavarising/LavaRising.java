@@ -18,8 +18,6 @@ import tk.diffusehyperion.gamemaster.GameMaster;
 import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.lavarising.States.main;
 
-import static tk.diffusehyperion.lavarising.States.main.bossbars;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;

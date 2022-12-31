@@ -18,11 +18,10 @@ import tk.diffusehyperion.gamemaster.GamePlayer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
 import static tk.diffusehyperion.lavarising.Commands.start.starting;
+import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class reroll implements CommandExecutor, Listener {
 
@@ -30,9 +29,6 @@ public class reroll implements CommandExecutor, Listener {
     public static ArrayList<Player> agreedlist = new ArrayList<>();
     public static boolean allowedtoreroll = false;
     public static boolean someonejoinedbefore = false;
-
-    public static HashMap<Player, Pair<Bossbar, BukkitRunnable>> rerollEnablingBossbars = new HashMap<>();
-    public static HashMap<Player, Bossbar> rerollEnabledBossbars = new HashMap<>();
 
     public static int[] countdown;
 
@@ -67,40 +63,17 @@ public class reroll implements CommandExecutor, Listener {
     }
 
     @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent e) {
-        if (Objects.equals(state, "pregame")) {
-            Player p = e.getPlayer();
-            if (allowedtoreroll) {
-                rerollEnabledBossbars.remove(p);
-                createAfterRerollBossbar(p);
-            } else {
-                rerollEnablingBossbars.remove(p);
-                createBeforeRerollBossbar(p);
-            }
-        }
-    }
-
-    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!someonejoinedbefore) {
             someonejoinedbefore = true;
-            int rerollDelay = config.getInt("pregame.rerolling.rerolltimer");
-            BukkitRunnable rerollEnableTask = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        createAfterRerollBossbar(p);
-                    }
-                    allowedtoreroll = true;
-                }
-            };
 
+            int rerollDelay = config.getInt("pregame.rerolling.rerolltimer");
             countdown = new int[]{rerollDelay};
             BukkitRunnable decrementCountdown = new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (countdown[0] == 0) {
-                        rerollEnableTask.runTask(plugin);
+                        allowedtoreroll = true;
                         this.cancel();
                     }
                     countdown[0]--;
@@ -108,7 +81,7 @@ public class reroll implements CommandExecutor, Listener {
             };
             decrementCountdown.runTaskTimer(plugin, 20, 20);
             for (Player p : Bukkit.getOnlinePlayers()) {
-                createBeforeRerollBossbar(p);
+
             }
 
         } else if (Objects.equals(state, "pregame")) {
@@ -134,46 +107,5 @@ public class reroll implements CommandExecutor, Listener {
             requiredplayers = 1;
         }
         return requiredplayers;
-    }
-
-    private void createAfterRerollBossbar(Player p) {
-        int requiredPlayers = getRequiredplayers();
-
-        Bossbar bossbar = barLib.getBossbar(p);
-        bossbar.setPercentage(1f);
-        bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredPlayers)));
-        rerollEnabledBossbars.put(p, bossbar);
-    }
-
-    private void createBeforeRerollBossbar(Player p) {
-        final Bossbar bossbar = barLib.getBossbar(p);
-        final String title = config.getString("pregame.rerolling.beforemessage");
-
-        // base delay before reroll
-        int duration = config.getInt("pregame.rerolling.rerolltimer");
-
-        // set percentage based on the already elapsed time
-        bossbar.setPercentage(BigDecimal.valueOf(countdown[0]).divide(BigDecimal.valueOf(duration), 5, RoundingMode.HALF_EVEN).floatValue());
-
-        BukkitRunnable task = new BukkitRunnable() {
-            public void run() {
-                bossbar.setPercentage(BigDecimal.valueOf(countdown[0]).divide(BigDecimal.valueOf(duration), 5, RoundingMode.HALF_EVEN).floatValue());
-                bossbar.setMessage(bossbarReplaceTitle(title, (double) countdown[0], (double) duration - countdown[0]));
-                if (countdown[0] <= 0.0) {
-                    barLib.clearBossbar(p);
-                    this.cancel();
-                }
-
-            }
-        };
-        task.runTaskTimer(plugin, 0L, 20L);
-
-        rerollEnablingBossbars.put(p, new Pair<>(bossbar, task));
-    }
-
-    private String bossbarReplaceTitle(String title, Double timeLeft, Double timeElapsed) {
-        String replacementTitle = title.replace(GamePlayer.timerReplacement.TIME_LEFT.toString(), String.valueOf(timeLeft));
-        replacementTitle = replacementTitle.replace(GamePlayer.timerReplacement.TIME_ELAPSED.toString(), String.valueOf(timeElapsed));
-        return replacementTitle;
     }
 }

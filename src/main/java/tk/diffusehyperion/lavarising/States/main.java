@@ -18,16 +18,15 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.barLib;
+import static tk.diffusehyperion.lavarising.LavaRising.state;
 
 public class main implements Listener {
-
-    public static HashMap<Player, Bossbar> bossbars = new HashMap<>();
     public static int lavaheight;
     public static Player winner;
     public static int[] timer;
 
     public void triggerMain(){
-        LavaRising.state = "main";
+        state = States.MAIN;
         LavaRising.gm.GamePlayer.playSoundToAll(Sound.WITHER_IDLE);
         LavaRising.world.setPVP(true);
         lavaheight = 1;

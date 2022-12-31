@@ -12,7 +12,7 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 public class grace {
 
     public void triggerGrace(){
-        state = "grace";
+        state = States.GRACE;
         for (Player p: Bukkit.getOnlinePlayers()) {
             p.setGameMode(GameMode.SURVIVAL);
             p.setHealth(20);

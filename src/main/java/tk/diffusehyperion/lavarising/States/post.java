@@ -10,14 +10,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.gm;
-import static tk.diffusehyperion.lavarising.LavaRising.plugin;
+import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class post {
 
     public void triggerPost(){
+        state = States.POSTGAME;
         gm.GamePlayer.playSoundToAll(Sound.FIREWORK_BLAST);
-        LavaRising.state = "post";
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", main.winner.getDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {

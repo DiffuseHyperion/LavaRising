@@ -14,8 +14,8 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class overtime {
     public void triggerOvertime(){
+        state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
-        state = "overtime";
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
         for (Player p : Bukkit.getOnlinePlayers()) {
             Bossbar bossbar = barLib.getBossbar(p);

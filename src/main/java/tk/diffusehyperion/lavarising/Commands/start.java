@@ -9,12 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.lavarising.States.grace;
+import tk.diffusehyperion.lavarising.States.States;
+import tk.diffusehyperion.lavarising.States.States.grace;
 
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnabledBossbars;
-import static tk.diffusehyperion.lavarising.Commands.reroll.rerollEnablingBossbars;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 
@@ -59,7 +58,7 @@ public class start implements CommandExecutor, Listener {
         if (starting) {
             createStartingBossbar(e.getPlayer());
         }
-        if (Objects.equals(state, "pregame")) {
+        if (state == States.PREGAME) {
             e.getPlayer().teleport(world.getSpawnLocation());
             //spawnradius does not exist in 1.8
         }
