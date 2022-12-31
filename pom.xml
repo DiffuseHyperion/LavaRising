@@ -55,7 +55,7 @@
 
     <repositories>
         <repository>
-            <id>gdiffusehyperion-repo</id>
+            <id>GameMaster-repo</id>
             <url>https://github.com/DiffuseHyperion/GameMaster/raw/repository</url>
         </repository>
         <repository>
@@ -65,6 +65,10 @@
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>BossbarLib-repo</id>
+            <url>https://raw.githubusercontent.com/DiffuseHyperion/BossbarLib/repository</url>
         </repository>
     </repositories>
 
@@ -79,6 +83,12 @@
             <groupId>tk.diffusehyperion</groupId>
             <artifactId>GameMaster</artifactId>
             <version>1.0.0-1.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.tigerhix.lib</groupId>
+            <artifactId>BossbarLib</artifactId>
+            <version>diffuse-2.0.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -22,9 +22,9 @@ import static tk.diffusehyperion.lavarising.LavaRising.barLib;
 public class main implements Listener {
 
     public static HashMap<Player, Bossbar> bossbars = new HashMap<>();
-    static int lavaheight;
-    static Player winner;
-    static double[] timer;
+    public static int lavaheight;
+    public static Player winner;
+    public static double[] timer;
 
     public void triggerMain(){
         LavaRising.state = "main";
@@ -78,7 +78,7 @@ public class main implements Listener {
         }
     }
 
-    public static void mainTimer(Player player) {
+    public void mainTimer(Player player) {
         Bossbar bossbar = barLib.getBossbar(player);
         bossbar.setMessage(LavaRising.config.getString("main.timername"));
 
@@ -97,7 +97,7 @@ public class main implements Listener {
         task.runTaskTimer(LavaRising.plugin, 0, 2);
     }
 
-    public static void overtimewarning() {
+    public void overtimewarning() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             Bossbar bossbar = barLib.getBossbar(p);
             bossbar.setMessage(Objects.requireNonNull(LavaRising.config.getString("overtime.warning.message")).replace("%threshold%", String.valueOf(LavaRising.config.getInt("overtime.threshold"))));

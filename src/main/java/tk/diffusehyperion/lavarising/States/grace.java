@@ -9,7 +9,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
-
 public class grace {
 
     public void triggerGrace(){

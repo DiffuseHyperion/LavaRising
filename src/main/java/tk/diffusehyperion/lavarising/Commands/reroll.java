@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.javatuples.Pair;
 import tk.diffusehyperion.gamemaster.GamePlayer;
@@ -25,15 +26,15 @@ import static tk.diffusehyperion.lavarising.Commands.start.starting;
 
 public class reroll implements CommandExecutor, Listener {
 
-    int agreedplayers = 0;
-    ArrayList<Player> agreedlist = new ArrayList<>();
-    static boolean allowedtoreroll = false;
-    static boolean someonejoinedbefore = false;
+    public static int agreedplayers = 0;
+    public static ArrayList<Player> agreedlist = new ArrayList<>();
+    public static boolean allowedtoreroll = false;
+    public static boolean someonejoinedbefore = false;
 
-    public static HashMap<Player, Pair<Bossbar, BukkitRunnable>> rerollEnablingBossbars;
-    public static HashMap<Player, Bossbar> rerollEnabledBossbars;
+    public static HashMap<Player, Pair<Bossbar, BukkitRunnable>> rerollEnablingBossbars = new HashMap<>();
+    public static HashMap<Player, Bossbar> rerollEnabledBossbars = new HashMap<>();
 
-    public int[] countdown;
+    public static int[] countdown;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -66,6 +67,20 @@ public class reroll implements CommandExecutor, Listener {
     }
 
     @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent e) {
+        if (Objects.equals(state, "pregame")) {
+            Player p = e.getPlayer();
+            if (allowedtoreroll) {
+                rerollEnabledBossbars.remove(p);
+                createAfterRerollBossbar(p);
+            } else {
+                rerollEnablingBossbars.remove(p);
+                createBeforeRerollBossbar(p);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!someonejoinedbefore) {
             someonejoinedbefore = true;
@@ -73,13 +88,8 @@ public class reroll implements CommandExecutor, Listener {
             BukkitRunnable rerollEnableTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    int requiredplayers = getRequiredplayers();
-
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        Bossbar bossbar = barLib.getBossbar(p);
-                        bossbar.setPercentage(1f);
-                        bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredplayers)));
-                        rerollEnabledBossbars.put(p, bossbar);
+                        createAfterRerollBossbar(p);
                     }
                     allowedtoreroll = true;
                 }
@@ -111,12 +121,7 @@ public class reroll implements CommandExecutor, Listener {
                     bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredPlayers)));
                 }
 
-                // create new bossbar
-                Bossbar bossbar = barLib.getBossbar(p);
-                bossbar.setPercentage(1f);
-                bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredPlayers)));
-                rerollEnabledBossbars.put(p, bossbar);
-
+                createAfterRerollBossbar(p);
             } else {
                 createBeforeRerollBossbar(p);
             }
@@ -130,6 +135,16 @@ public class reroll implements CommandExecutor, Listener {
         }
         return requiredplayers;
     }
+
+    private void createAfterRerollBossbar(Player p) {
+        int requiredPlayers = getRequiredplayers();
+
+        Bossbar bossbar = barLib.getBossbar(p);
+        bossbar.setPercentage(1f);
+        bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredPlayers)));
+        rerollEnabledBossbars.put(p, bossbar);
+    }
+
     private void createBeforeRerollBossbar(Player p) {
         final Bossbar bossbar = barLib.getBossbar(p);
         final String title = config.getString("pregame.rerolling.beforemessage");
