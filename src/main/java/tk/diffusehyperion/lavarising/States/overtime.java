@@ -20,12 +20,12 @@ public class overtime {
         for (Player p : Bukkit.getOnlinePlayers()) {
             Bossbar bossbar = barLib.getBossbar(p);
             bossbar.setMessage(config.getString("overtime.bartitle"));
-            double[] timer = {0};
+            int[] timer = {0};
             BukkitRunnable task = new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (timer[0] != config.getInt("overtime.speed")) {
-                        timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
+                        timer[0] += 1;
                     }
                     bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("overtime.speed")), 2, RoundingMode.HALF_EVEN).floatValue());
                     if (Objects.equals(state, "post")) {
@@ -34,7 +34,7 @@ public class overtime {
                     }
                 }
             };
-            task.runTaskTimer(plugin, 0, 2);
+            task.runTaskTimer(plugin, 0, 20);
         }
     }
 }

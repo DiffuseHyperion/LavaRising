@@ -23,13 +23,15 @@ public class grace {
         border.setSize(config.getDouble("grace.finalbordersize"), config.getLong("grace.speed"));
         border.setWarningDistance(0);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            gm.GamePlayer.timer(p, config.getInt("grace.duration"), config.getString("grace.timername"), new BukkitRunnable() {
-                @Override
-                public void run() {
-                    new main().triggerMain();
-                }
-            });
+            gm.GamePlayer.timer(p, config.getInt("grace.duration"), config.getString("grace.timername"));
         }
+        BukkitRunnable startMain = new BukkitRunnable() {
+            @Override
+            public void run() {
+                new main().triggerMain();
+            }
+        };
+        startMain.runTaskLater(plugin, config.getInt("grace.duration") * 20L);
         gm.GamePlayer.playSoundToAll(Sound.ENDERDRAGON_GROWL);
     }
 }

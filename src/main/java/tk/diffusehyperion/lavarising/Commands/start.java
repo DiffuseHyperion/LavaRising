@@ -53,12 +53,15 @@ public class start implements CommandExecutor, Listener {
     }
 
     private void createStartingBossbar(Player p) {
-        gm.GamePlayer.timer(p, 5, config.getString("pregame.start.timername"), new BukkitRunnable() {
+        gm.GamePlayer.timer(p, 5, config.getString("pregame.start.timername"));
+
+        BukkitRunnable startGrace = new BukkitRunnable() {
             @Override
             public void run() {
                 new grace().triggerGrace();
             }
-        });
+        };
+        startGrace.runTaskLater(plugin, 5 * 20);
     }
 
 }
