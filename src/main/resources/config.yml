@@ -79,7 +79,7 @@ overtime:
     message: Overtime triggers at Y %threshold%!
     # What the message will be.
     # Replace %threshold% with the threshold to activate overtime. Set below VVV
-  threshold: 305
+  threshold: 240
   # The level of lava needed for the game to be considered to be in overtime.
   # Keep in mind that the build limit is 320 on 1.18, and 255 on <1.18!
 
