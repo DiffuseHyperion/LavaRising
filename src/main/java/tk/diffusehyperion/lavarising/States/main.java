@@ -94,22 +94,6 @@ public class main implements Listener {
     }
 
     public void overtimewarning() {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            Bossbar bossbar = barLib.getBossbar(p);
-            bossbar.setMessage(Objects.requireNonNull(LavaRising.config.getString("overtime.warning.message")).replace("%threshold%", String.valueOf(LavaRising.config.getInt("overtime.threshold"))));
-            double[] timer = {0};
-            BukkitRunnable task = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
-                    bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("overtime.warning.time")), 2, RoundingMode.HALF_EVEN).floatValue());
-                    if (timer[0] >= LavaRising.config.getInt("overtime.warning.time")) {
-                        barLib.clearBossbar(p);
-                        this.cancel();
-                    }
-                }
-            };
-            task.runTaskTimer(LavaRising.plugin, 0, 20);
-        }
+        Bukkit.broadcastMessage(LavaRising.config.getString("overtime.warning.message").replace("%threshold%", String.valueOf(LavaRising.config.getInt("overtime.threshold"))));
     }
 }

@@ -73,11 +73,9 @@ main:
 overtime:
   # Lava does not rise during overtime. Game ends when there is one person left alive!
   warning:
-    # Warn the players about overtime? The warning will be shown by a bossbar below the main timer.
+    # Warn the players about overtime? The warning will be shown by a chat message.
     enabled: true
     # self-explanatory
-    time: 10
-    # How long the meesage will show for. Unit is seconds.
     message: Overtime triggers at Y %threshold%!
     # What the message will be.
     # Replace %threshold% with the threshold to activate overtime. Set below VVV
