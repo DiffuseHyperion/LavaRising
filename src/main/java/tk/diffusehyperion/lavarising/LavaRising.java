@@ -1,6 +1,6 @@
 package tk.diffusehyperion.lavarising;
 
-import me.tigerhix.lib.bossbar.BossbarLib;
+import me.tigerhix.BossbarLib.BossbarLib;
 import tk.diffusehyperion.lavarising.Commands.reroll;
 import tk.diffusehyperion.lavarising.Commands.start;
 import org.bukkit.*;

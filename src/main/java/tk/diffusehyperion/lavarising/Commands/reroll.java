@@ -1,6 +1,6 @@
 package tk.diffusehyperion.lavarising.Commands;
 
-import me.tigerhix.lib.bossbar.Bossbar;
+import me.tigerhix.BossbarLib.Bossbar;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

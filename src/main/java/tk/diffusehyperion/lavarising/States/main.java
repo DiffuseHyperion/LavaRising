@@ -1,6 +1,6 @@
 package tk.diffusehyperion.lavarising.States;
 
-import me.tigerhix.lib.bossbar.Bossbar;
+import me.tigerhix.BossbarLib.Bossbar;
 import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -75,7 +75,7 @@ public class main implements Listener {
     public void mainTimer(Player player) {
         Bossbar bossbar = barLib.getBossbar(player);
         bossbar.setMessage(LavaRising.config.getString("main.timername"));
-        bossbar.setPercentage(1);
+        bossbar.setPercentage(1F);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
