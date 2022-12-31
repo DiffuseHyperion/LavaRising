@@ -32,8 +32,7 @@ public class main implements Listener {
         LavaRising.world.setPVP(true);
         lavaheight = 1;
         timer = new int[]{0};
-        int bordersize = (int) LavaRising.world.getWorldBorder().getSize();
-        int coords = BigDecimal.valueOf(bordersize).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
+        int coords = BigDecimal.valueOf(LavaRising.config.getInt("grace.finalbordersize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
         BukkitRunnable lavariser = new BukkitRunnable() {
             @Override
             public void run() {
@@ -50,6 +49,7 @@ public class main implements Listener {
                     this.cancel();
                 }
                 timer[0] += 1;
+                Bukkit.broadcastMessage("triggered, lavaHeight: " + lavaheight + ", timer[0]: " + timer[0]);
             }
         };
         lavariser.runTaskTimer(LavaRising.plugin,0, 20);
