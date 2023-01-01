@@ -7,6 +7,7 @@ import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
 import tk.diffusehyperion.gamemaster.GamePlayer;
 import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
+import tk.diffusehyperion.lavarising.Commands.TimerColourParser;
 import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -28,9 +29,9 @@ public class post implements Listener {
         state = States.POSTGAME;
         GamePlayer.playSoundToAll(Sound.FIREWORK_BLAST);
 
-        if (Objects.equals(LavaRising.config.getString("post.creativemode"), "winner")) {
+        if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "winner")) {
             main.winner.setGameMode(GameMode.CREATIVE);
-        } else if (Objects.equals(LavaRising.config.getString("post.creativemode"), "all")) {
+        } else if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "all")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.setGameMode(GameMode.CREATIVE);
             }
@@ -39,15 +40,15 @@ public class post implements Listener {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", main.winner.getDisplayName());
 
-        postTimer = GamePlayer.timer(config.getInt("post.duration"), config.getString("post.timername"), new BukkitRunnable() {
+        postTimer = GamePlayer.timer(config.getInt("game.post.duration"), config.getString("timers.post.name"), new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.kickPlayer(config.getString("post.kickmessage"));
+                    p.kickPlayer(config.getString("game.post.kickMessage"));
                     GameServer.restart();
                 }
             }
-        }, hashMap, null, null).getValue0();
+        }, hashMap, null, TimerColourParser.getTimerColour("timers.post.style")).getValue0();
 
         if (Objects.nonNull(overtimeTimer)) {
             overtimeTimer.getValue0().complete();

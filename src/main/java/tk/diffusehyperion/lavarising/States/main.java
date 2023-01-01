@@ -37,17 +37,17 @@ public class main implements Listener {
 
         lavaheight = 1;
         timer = new int[]{0};
-        int borderRadius = BigDecimal.valueOf(config.getInt("grace.finalbordersize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
+        int borderRadius = BigDecimal.valueOf(config.getInt("game.grace.finalBorderSize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
 
         BukkitRunnable lavariser = new BukkitRunnable() {
             @Override
             public void run() {
-                if (timer[0] >= config.getInt("main.lavainterval")) {
+                if (timer[0] >= config.getInt("game.main.lavaInterval")) {
                     GameWorld.fillBlocks(new Location(LavaRising.world, -borderRadius, lavaheight, -borderRadius), new Location(LavaRising.world, borderRadius, lavaheight, borderRadius), Material.LAVA);
                     lavaheight++;
                     timer[0] = 0;
                 }
-                if (lavaheight >= config.getInt("overtime.threshold")) {
+                if (lavaheight >= config.getInt("game.overtime.threshold")) {
                     overtime.triggerOvertime();
                     this.cancel();
                 }
@@ -61,7 +61,7 @@ public class main implements Listener {
         for (Player p : Bukkit.getOnlinePlayers()) {
             getMainTimer(p);
         }
-        if (config.getBoolean("overtime.warning.enabled")) {
+        if (config.getBoolean("game.overtime.warning.enabled")) {
             overtimewarning();
         }
     }
@@ -71,7 +71,7 @@ public class main implements Listener {
 
         if (state == States.MAIN || state == States.OVERTIME) {
             mainTimers.remove(event.getEntity());
-            event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage"))
+            event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage"))
                     .replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
                     .replace("%player%", event.getEntity().getName())
                     .replace("%left%", String.valueOf(mainTimers.size())));
@@ -91,7 +91,7 @@ public class main implements Listener {
         BukkitRunnable task = new BukkitRunnable() {
             public void run() {
                 stringBuffer.delete(0, stringBuffer.length());
-                stringBuffer.append(Objects.requireNonNull(config.getString("main.timername"))
+                stringBuffer.append(Objects.requireNonNull(config.getString("game.main.indicatorTitle"))
                         .replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight))
                         .replace("%level%", String.valueOf(lavaheight)));
 
@@ -107,6 +107,6 @@ public class main implements Listener {
     }
 
     public static void overtimewarning() {
-        Bukkit.broadcastMessage(config.getString("overtime.warning.message").replace("%threshold%", String.valueOf(config.getInt("overtime.threshold"))));
+        Bukkit.broadcastMessage(config.getString("game.overtime.warning.message").replace("%threshold%", String.valueOf(config.getInt("overtime.threshold"))));
     }
 }

@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
 import tk.diffusehyperion.gamemaster.GamePlayer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
+import tk.diffusehyperion.lavarising.Commands.TimerColourParser;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
@@ -20,7 +21,6 @@ public class grace implements Listener {
     public static CompletableStringBuffer graceTimer;
 
     public static void triggerGrace(){
-        Bukkit.getLogger().info("grace triggered!");
         state = States.GRACE;
         for (Player p: Bukkit.getOnlinePlayers()) {
             p.setGameMode(GameMode.SURVIVAL);
@@ -29,14 +29,14 @@ public class grace implements Listener {
             p.setSaturation(5);
         }
         WorldBorder border = world.getWorldBorder();
-        border.setSize(config.getDouble("grace.finalbordersize"), config.getLong("grace.speed"));
+        border.setSize(config.getDouble("game.grace.finalBorderSize"), config.getLong("game.grace.speed"));
         border.setWarningDistance(0);
-        graceTimer = GamePlayer.timer(config.getInt("grace.duration"), config.getString("grace.timername"), new BukkitRunnable() {
+        graceTimer = GamePlayer.timer(config.getInt("game.grace.duration"), config.getString("timers.grace.name"), new BukkitRunnable() {
             @Override
             public void run() {
                 main.triggerMain();
             }
-        }, null, 10, null).getValue0();
+        }, null, 20, TimerColourParser.getTimerColour("timers.start.style")).getValue0();
         for (Player p : Bukkit.getOnlinePlayers()) {
             ActionBarSender.sendUpdatingActionBar(p, graceTimer, 2);
         }

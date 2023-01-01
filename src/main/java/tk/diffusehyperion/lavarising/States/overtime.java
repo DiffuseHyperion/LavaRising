@@ -21,7 +21,7 @@ public class overtime {
     public static void triggerOvertime(){
         state = States.OVERTIME;
         GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
-        world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
+        world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
 
         overtimeTimer = getOvertimeTimer();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -30,8 +30,8 @@ public class overtime {
     }
 
     public static Pair<CompletableStringBuffer, BukkitRunnable> getOvertimeTimer() {
-        final int duration = config.getInt("overtime.speed");
-        final String title = config.getString("overtime.title");
+        final int duration = config.getInt("game.overtime.speed");
+        final String title = config.getString("game.overtime.title");
 
         final BigDecimal[] timer = new BigDecimal[]{BigDecimal.valueOf(duration).setScale(1, RoundingMode.HALF_UP)};
         final CompletableStringBuffer buffer = new CompletableStringBuffer();

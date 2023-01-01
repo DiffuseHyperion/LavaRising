@@ -55,17 +55,17 @@ public final class LavaRising extends JavaPlugin implements Listener {
         boolean requireResetConfig;
         boolean requireResetRestart = false;
         try {
-            requireResetConfig = GameServer.checkForServerProperties(config.getBoolean("debug.ignoreconfig.disablespawnprotection"),
-                    config.getBoolean("debug.ignoreconfig.disablenether"),
-                    config.getBoolean("debug.ignoreconfig.disableend"),
-                    config.getBoolean("debug.ignoreconfig.allowflight"));
+            requireResetConfig = GameServer.checkForServerProperties(config.getBoolean("debug.ignoreConfig.disableSpawnProtection"),
+                    config.getBoolean("debug.ignoreConfig.disableNether"),
+                    config.getBoolean("debug.ignoreConfig.disableEnd"),
+                    config.getBoolean("debug.ignoreConfig.allowFlight"));
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
-        if (config.getBoolean("debug.restartsetup.enabled")) {
+        if (config.getBoolean("debug.restartSetup.enabled")) {
             try {
-                requireResetRestart = GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartsetup.os", GameServer.getOS().toString())),
-                        config.getString("debug.restartsetup.jar", GameServer.getServerJar().toString()));
+                requireResetRestart = GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", GameServer.getOS().toString())),
+                        config.getString("debug.restartSetup.jar", GameServer.getServerJar().toString()));
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
@@ -75,8 +75,8 @@ public final class LavaRising extends JavaPlugin implements Listener {
             GameServer.restart();
         }
 
-        world = GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
-        GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
+        world = GameWorld.createWorld(config.getString("game.pregame.worldName"), config.getLong("game.pregame.seed", new Random().nextLong()));
+        GameWorld.setupWorld(world, true, config.getDouble("game.pregame.borderSize"), 0, 0, 0);
     }
 
     @Override
@@ -102,9 +102,15 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         switch (state) {
-            case PREGAME: player.setGameMode(GameMode.ADVENTURE);
-            case GRACE: player.setGameMode(GameMode.SURVIVAL);
-            case MAIN: player.setGameMode(GameMode.SPECTATOR);
+            case PREGAME:
+                player.setGameMode(GameMode.ADVENTURE);
+                break;
+            case GRACE:
+                player.setGameMode(GameMode.SURVIVAL);
+                break;
+            case MAIN:
+                player.setGameMode(GameMode.SPECTATOR);
+                break;
         }
     }
 
@@ -115,22 +121,25 @@ public final class LavaRising extends JavaPlugin implements Listener {
             case PREGAME:
                 player.setGameMode(GameMode.ADVENTURE);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
+                break;
             case GRACE:
                 player.setGameMode(GameMode.SURVIVAL);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
+                break;
             case MAIN:
-                player.setGameMode(GameMode.SPECTATOR);
             case OVERTIME:
                 player.setGameMode(GameMode.SPECTATOR);
+                break;
             case POSTGAME:
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
-                if (Objects.equals(LavaRising.config.getString("post.creativemode"), "winner") && main.winner.equals(player)) {
+                if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "winner") && main.winner.equals(player)) {
                     player.setGameMode(GameMode.CREATIVE);
-                } else if (Objects.equals(LavaRising.config.getString("post.creativemode"), "all")) {
+                } else if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "all")) {
                     player.setGameMode(GameMode.CREATIVE);
                 } else {
                     player.setGameMode(GameMode.ADVENTURE);
                 }
+                break;
         }
     }
 

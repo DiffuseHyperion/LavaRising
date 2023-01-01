@@ -12,13 +12,13 @@ commands:
   reroll:
     description: Vote to reroll the map before the game starts. It must be enabled by the operator.
     permission: lavarising.reroll
-  ## state:
-    ## description: DEBUG! Shows the current state of the game
-    ## permission: lavarising.state
+  # state:
+    # description: DEBUG! Shows the current state of the game
+    # permission: lavarising.state
 permissions:
   lavarising.start:
     default: op
   lavarising.reroll:
     default: true
-  ## lavarising.state:
-    ## default: op
+  # lavarising.state:
+    # default: op

@@ -33,21 +33,19 @@ public class start implements CommandExecutor, Listener {
             reroll.beforeRerollBuffer.complete();
             reroll.afterRerollBuffer.complete();
 
-            if (config.getBoolean("pregame.start.countdown")) {
-                startingGraceTimer = GamePlayer.timer(config.getInt("pregame.start.timer"),
-                        config.getString("pregame.start.timername"),
+            if (config.getBoolean("game.start.countdown")) {
+                startingGraceTimer = GamePlayer.timer(config.getInt("game.start.timer"),
+                        config.getString("timers.start.name"),
                         new BukkitRunnable(){
                             @Override
                             public void run() {
-                                Bukkit.getLogger().info("triggering grace from task");
                                 grace.triggerGrace();
                             }
-                }, null, 5, null).getValue0();
+                }, null, 10, TimerColourParser.getTimerColour("timers.start.name.style")).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     ActionBarSender.sendUpdatingActionBar(p, startingGraceTimer, 2);
                 }
             } else {
-                Bukkit.getLogger().info("triggering grace directly");
                 grace.triggerGrace();
             }
         }
