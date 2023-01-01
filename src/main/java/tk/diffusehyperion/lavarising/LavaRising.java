@@ -1,9 +1,9 @@
 package tk.diffusehyperion.lavarising;
 
-import me.tigerhix.BossbarLib.BossbarLib;
-import tk.diffusehyperion.lavarising.Commands.reroll;
-import tk.diffusehyperion.lavarising.Commands.start;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,21 +16,26 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.diffusehyperion.gamemaster.GameMaster;
 import tk.diffusehyperion.gamemaster.GameServer;
+import tk.diffusehyperion.lavarising.Commands.reroll;
+import tk.diffusehyperion.lavarising.Commands.start;
+import tk.diffusehyperion.lavarising.States.States;
+import tk.diffusehyperion.lavarising.States.grace;
 import tk.diffusehyperion.lavarising.States.main;
+import tk.diffusehyperion.lavarising.States.post;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
+import static tk.diffusehyperion.lavarising.States.main.mainTimers;
+
 public final class LavaRising extends JavaPlugin implements Listener {
     public static FileConfiguration config;
     public static World world;
-    public static String state;
+    public static States state;
     public static Plugin plugin;
     public static GameMaster gm;
-
-    public static BossbarLib barLib;
     ArrayList<Sound> attacksounds = new ArrayList<>();
 
     @Override
@@ -43,7 +48,9 @@ public final class LavaRising extends JavaPlugin implements Listener {
         // Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
         Objects.requireNonNull(this.getCommand("reroll")).setExecutor(new reroll());
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new grace(), this);
         getServer().getPluginManager().registerEvents(new main(), this);
+        getServer().getPluginManager().registerEvents(new post(), this);
         getServer().getPluginManager().registerEvents(new reroll(), this);
         getServer().getPluginManager().registerEvents(new start(), this);
 
@@ -72,8 +79,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
         world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
         gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
-
-        barLib = BossbarLib.createFor(this, 2);
     }
 
     @Override
@@ -86,7 +91,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
     public void setupFields() {
         plugin = this;
-        state = "pregame";
+        state = States.PREGAME;
         start.starting = false;
         attacksounds.add(Sound.SUCCESSFUL_HIT);
         attacksounds.add(Sound.WITHER_SHOOT);
@@ -99,9 +104,9 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         switch (state) {
-            case "pregame" -> player.setGameMode(GameMode.ADVENTURE);
-            case "grace", "starter" -> player.setGameMode(GameMode.SURVIVAL);
-            case "main" -> player.setGameMode(GameMode.SPECTATOR);
+            case PREGAME -> player.setGameMode(GameMode.ADVENTURE);
+            case GRACE -> player.setGameMode(GameMode.SURVIVAL);
+            case MAIN -> player.setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -109,20 +114,21 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         switch (state) {
-            case "pregame" -> {
+            case PREGAME -> {
                 player.setGameMode(GameMode.ADVENTURE);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
-            case "grace" -> {
+            case GRACE -> {
                 player.setGameMode(GameMode.SURVIVAL);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
-            case "main", "post", "overtime" -> {
+            case MAIN , POSTGAME, OVERTIME -> {
                 player.setGameMode(GameMode.SPECTATOR);
-                bossbars.remove(player);
-                event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
-                        .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(bossbars.size())));
-                gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
+                event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage"))
+                        .replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
+                        .replace("%player%", event.getEntity().getName())
+                        .replace("%left%", String.valueOf(mainTimers.size())));
+                gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(attacksounds.size())));
             }
         }
     }

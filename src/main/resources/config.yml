@@ -19,12 +19,15 @@ pregame:
   rerolling:
     enabled: true
     # Allow rerolling of the map by a command.
+
     percentagetopass: 80
     # How many players need to agree on a reroll to reroll the map.
+
     beforemessage: Rerolling of the map will be enabled in %time_left% seconds.
-    # Rerolling is disabled when the server starts. When someone joins the server, rerolling is enabled after 15 seconds. This is to allow the world to load first, and to not cause any weird world gen bugs.
-    # Before the 15 seconds is up, there will be a timer showing the countdown. The title of the cooldown will be the above message.
+    # Rerolling is disabled when the server starts, and will be enabled after X seconds. This is to allow the world to load first, and to not cause any weird world gen bugs.
+
     rerolltimer: 15
+    # How long to wait before rerolling is enabled. Unit is seconds.
 
     enabledmessage: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
     # When the 15 seconds is up, the timer's title will change to the above message.
@@ -39,6 +42,8 @@ pregame:
     # When /start is sent, the plugin will count down a time before starting.
     timername: "Starting in %time_left% seconds!"
     # What the countdown timer message will be.
+    timer: 5
+
 
   bordersize: 10
   # The size for the border at the start. Unit is the number of blocks for the border diameter.
@@ -64,6 +69,7 @@ main:
 
   lavainterval: 5
   # How fast the lava rises when the lava level is below sea level. Unit is seconds.
+
   deathmessage: "%original% and is eliminated! %left% players remaining."
   # What the death message should be.
   # Replace the original death message with %original%.
@@ -72,6 +78,7 @@ main:
 
 overtime:
   # Lava does not rise during overtime. Game ends when there is one person left alive!
+
   warning:
     # Warn the players about overtime? The warning will be shown by a chat message.
     enabled: true
@@ -85,11 +92,12 @@ overtime:
 
   finalbordersize: 20
   # How small the border will shrink to. Unit is the number of blocks for the border diameter.
+
   speed: 120
   # How fast the border will shrink.
   # Make sure the speed is not too fast so that people can see it coming!
 
-  bartitle: OVERTIME! Lava is paused. Border will shrink slowly to the middle. Last one alive wins!
+  title: OVERTIME! Lava is paused. Border will shrink slowly to the middle. Last one alive wins!
   # What the overtime bar name should be.
 
 post:

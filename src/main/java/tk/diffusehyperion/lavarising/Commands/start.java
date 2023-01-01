@@ -9,10 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
+import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 import tk.diffusehyperion.lavarising.States.States;
-import tk.diffusehyperion.lavarising.States.States.grace;
-
-import java.util.Objects;
+import tk.diffusehyperion.lavarising.States.grace;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
@@ -20,34 +20,32 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 public class start implements CommandExecutor, Listener {
 
     public static boolean starting;
+    public static CompletableStringBuffer startingGraceTimer;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
         if (Bukkit.getServer().getOnlinePlayers().size() == 1) {
-            sender.sendMessage("There is not enough players...");
+            sender.sendMessage("There needs to be at least 2 players to start the game!");
         } else {
             starting = true;
             sender.sendMessage("Start command received!");
-            for (Player p : rerollEnablingBossbars.keySet()) {
-                barLib.clearBossbar(p);
-                rerollEnablingBossbars.get(p).getValue1().cancel();
-            }
-            for (Player p : rerollEnabledBossbars.keySet()) {
-                barLib.clearBossbar(p);
-            }
+            reroll.beforeRerollBuffer.complete();
+            reroll.afterRerollBuffer.complete();
+
             if (config.getBoolean("pregame.start.countdown")) {
+                startingGraceTimer = gm.GamePlayer.timer(config.getInt("pregame.start.timer"),
+                        config.getString("pregame.start.timername"),
+                        new BukkitRunnable(){
+                            @Override
+                            public void run() {
+                                grace.triggerGrace();
+                            }
+                }, null, null, null).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    createStartingBossbar(p);
+                    ActionBarSender.sendUpdatingActionBar(p, startingGraceTimer, 2);
                 }
-                BukkitRunnable startGrace = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        new grace().triggerGrace();
-                    }
-                };
-                startGrace.runTaskLater(plugin, 5 * 20);
             } else {
-                new grace().triggerGrace();
+                grace.triggerGrace();
             }
         }
         return true;
@@ -56,16 +54,11 @@ public class start implements CommandExecutor, Listener {
     @EventHandler
     public void playerJoin(PlayerJoinEvent e) {
         if (starting) {
-            createStartingBossbar(e.getPlayer());
+            ActionBarSender.sendUpdatingActionBar(e.getPlayer(), startingGraceTimer, 2);
         }
         if (state == States.PREGAME) {
             e.getPlayer().teleport(world.getSpawnLocation());
             //spawnradius does not exist in 1.8
         }
     }
-
-    private void createStartingBossbar(Player p) {
-        gm.GamePlayer.timer(p, 5, config.getString("pregame.start.timername"));
-    }
-
 }

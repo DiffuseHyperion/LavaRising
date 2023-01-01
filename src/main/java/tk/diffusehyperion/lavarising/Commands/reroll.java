@@ -1,6 +1,5 @@
 package tk.diffusehyperion.lavarising.Commands;
 
-import me.tigerhix.BossbarLib.Bossbar;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -10,10 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.javatuples.Pair;
-import tk.diffusehyperion.gamemaster.GamePlayer;
+import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
+import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,6 +20,7 @@ import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.Commands.start.starting;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.States.PREGAME;
 
 public class reroll implements CommandExecutor, Listener {
 
@@ -30,12 +29,13 @@ public class reroll implements CommandExecutor, Listener {
     public static boolean allowedtoreroll = false;
     public static boolean someonejoinedbefore = false;
 
-    public static int[] countdown;
+    public static CompletableStringBuffer beforeRerollBuffer;
+    public static CompletableStringBuffer afterRerollBuffer;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         int requiredplayers = getRequiredplayers();
-        if (Objects.equals(state, "pregame") && sender instanceof Player && config.getBoolean("pregame.rerolling.enabled") && !agreedlist.contains(sender) && allowedtoreroll && !starting) {
+        if (state == PREGAME && sender instanceof Player && config.getBoolean("pregame.rerolling.enabled") && !agreedlist.contains(sender) && allowedtoreroll && !starting) {
             agreedlist.add((Player) sender);
             agreedplayers++;
             if (agreedplayers < requiredplayers) {
@@ -46,7 +46,7 @@ public class reroll implements CommandExecutor, Listener {
                 }
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
             }
-        } else if (!Objects.equals(state, "pregame")) {
+        } else if (!(state == PREGAME)) {
             sender.sendMessage("You can only reroll the map before the game starts!");
         } else if (!(sender instanceof Player)) {
             sender.sendMessage("You can only run this command as a player!");
@@ -66,37 +66,42 @@ public class reroll implements CommandExecutor, Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!someonejoinedbefore) {
             someonejoinedbefore = true;
-
             int rerollDelay = config.getInt("pregame.rerolling.rerolltimer");
-            countdown = new int[]{rerollDelay};
-            BukkitRunnable decrementCountdown = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (countdown[0] == 0) {
-                        allowedtoreroll = true;
-                        this.cancel();
-                    }
-                    countdown[0]--;
-                }
-            };
-            decrementCountdown.runTaskTimer(plugin, 20, 20);
-            for (Player p : Bukkit.getOnlinePlayers()) {
 
+            beforeRerollBuffer = gm.GamePlayer.timer(rerollDelay,
+                    config.getString("pregame.rerolling.beforemessage"),
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            allowedtoreroll = true;
+                            int requiredPlayers = getRequiredplayers();
+
+                            afterRerollBuffer = new CompletableStringBuffer();
+                            afterRerollBuffer.stringBuffer.append(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage"))
+                                    .replace("%required%", String.valueOf(requiredPlayers)));
+
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                ActionBarSender.sendUpdatingActionBar(p, afterRerollBuffer, 2);
+                            }
+                        }
+                    }, null, null, null).getValue0();
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                ActionBarSender.sendUpdatingActionBar(p, beforeRerollBuffer, 2);
             }
 
-        } else if (Objects.equals(state, "pregame")) {
+        } else if (state == PREGAME) {
             Player p = event.getPlayer();
             if (allowedtoreroll) {
                 int requiredPlayers = getRequiredplayers();
 
-                // update messages
-                for (Bossbar bossbar : rerollEnabledBossbars.values()) {
-                    bossbar.setMessage(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage")).replace("%required%", String.valueOf(requiredPlayers)));
-                }
+                afterRerollBuffer.stringBuffer.delete(0, afterRerollBuffer.stringBuffer.length());
+                afterRerollBuffer.stringBuffer.append(Objects.requireNonNull(config.getString("pregame.rerolling.enabledmessage"))
+                        .replace("%required%", String.valueOf(requiredPlayers)));
 
-                createAfterRerollBossbar(p);
+                ActionBarSender.sendUpdatingActionBar(p, afterRerollBuffer, 2);
             } else {
-                createBeforeRerollBossbar(p);
+                ActionBarSender.sendUpdatingActionBar(p, beforeRerollBuffer, 2);
             }
         }
     }

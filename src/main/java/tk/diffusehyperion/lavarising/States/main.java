@@ -1,7 +1,5 @@
 package tk.diffusehyperion.lavarising.States;
 
-import me.tigerhix.BossbarLib.Bossbar;
-import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,13 +9,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import tk.diffusehyperion.gamemaster.GameMaster;
+import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
+import tk.diffusehyperion.gamemaster.Util.Pair;
+import tk.diffusehyperion.lavarising.LavaRising;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.barLib;
 import static tk.diffusehyperion.lavarising.LavaRising.state;
 
 public class main implements Listener {
@@ -25,18 +26,23 @@ public class main implements Listener {
     public static Player winner;
     public static int[] timer;
 
-    public void triggerMain(){
+    public static HashMap<Player, Pair<CompletableStringBuffer, BukkitRunnable>> mainTimers = new HashMap<>();
+
+    public static void triggerMain(){
         state = States.MAIN;
+
         LavaRising.gm.GamePlayer.playSoundToAll(Sound.WITHER_IDLE);
         LavaRising.world.setPVP(true);
+
         lavaheight = 1;
         timer = new int[]{0};
-        int coords = BigDecimal.valueOf(LavaRising.config.getInt("grace.finalbordersize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
+        int borderRadius = BigDecimal.valueOf(LavaRising.config.getInt("grace.finalbordersize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
+
         BukkitRunnable lavariser = new BukkitRunnable() {
             @Override
             public void run() {
                 if (timer[0] >= LavaRising.config.getInt("main.lavainterval")) {
-                    LavaRising.gm.GameWorld.fillBlocks(new Location(LavaRising.world, -coords, lavaheight, -coords), new Location(LavaRising.world, coords, lavaheight, coords), Material.LAVA);
+                    LavaRising.gm.GameWorld.fillBlocks(new Location(LavaRising.world, -borderRadius, lavaheight, -borderRadius), new Location(LavaRising.world, borderRadius, lavaheight, borderRadius), Material.LAVA);
                     lavaheight++;
                     timer[0] = 0;
                 }
@@ -44,7 +50,7 @@ public class main implements Listener {
                     new overtime().triggerOvertime();
                     this.cancel();
                 }
-                if (Objects.equals(LavaRising.state, "post")) {
+                if (state == States.POSTGAME) {
                     this.cancel();
                 }
                 timer[0] += 1;
@@ -52,7 +58,7 @@ public class main implements Listener {
         };
         lavariser.runTaskTimer(LavaRising.plugin,0, 20);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            mainTimer(p);
+            getMainTimer(p);
         }
         if (LavaRising.config.getBoolean("overtime.warning.enabled")) {
             overtimewarning();
@@ -61,35 +67,37 @@ public class main implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        if (Objects.equals(LavaRising.state, "main") || Objects.equals(LavaRising.state, "overtime")) {
-            bossbars.remove(event.getEntity());
-            if (bossbars.size() == 1) {
-                winner = (Player) bossbars.keySet().toArray()[0];
+        if (state == States.MAIN || state == States.OVERTIME) {
+            mainTimers.remove(event.getEntity());
+            if (mainTimers.size() == 1) {
+                winner = (Player) mainTimers.keySet().toArray()[0];
                 new post().triggerPost();
             }
         }
     }
 
-    public void mainTimer(Player player) {
-        Bossbar bossbar = barLib.getBossbar(player);
-        bossbar.setMessage(LavaRising.config.getString("main.timername"));
-        bossbar.setPercentage(1F);
+    public static void getMainTimer(Player player) {
+        final CompletableStringBuffer buffer = new CompletableStringBuffer();
+        final StringBuffer stringBuffer = buffer.stringBuffer;
         BukkitRunnable task = new BukkitRunnable() {
-            @Override
             public void run() {
-                bossbar.setMessage(Objects.requireNonNull(LavaRising.config.getString("main.timername")).replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight)).replace("%level%", String.valueOf(lavaheight)));
-                if (Objects.equals(LavaRising.state, "overtime") || Objects.equals(LavaRising.state, "post")) {
-                    barLib.clearBossbar(player);
+                stringBuffer.delete(0, stringBuffer.length());
+                stringBuffer.append(Objects.requireNonNull(LavaRising.config.getString("main.timername"))
+                        .replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight))
+                        .replace("%level%", String.valueOf(lavaheight)));
+
+                if (state == States.OVERTIME || state == States.POSTGAME) {
+                    buffer.complete();
                     this.cancel();
                 }
-                bossbar.setPercentage(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("main.lavainterval")), 2, RoundingMode.HALF_EVEN).floatValue());
             }
         };
-        task.runTaskTimer(LavaRising.plugin, 0, 20);
-        bossbars.put(player, bossbar);
+        task.runTaskTimer(GameMaster.plugin, 0L, 2L);
+
+        mainTimers.put(player, new Pair<>(buffer, task));
     }
 
-    public void overtimewarning() {
+    public static void overtimewarning() {
         Bukkit.broadcastMessage(LavaRising.config.getString("overtime.warning.message").replace("%threshold%", String.valueOf(LavaRising.config.getInt("overtime.threshold"))));
     }
 }

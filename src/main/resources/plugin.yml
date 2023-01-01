@@ -5,7 +5,6 @@ api-version: 1.13
 description: average lava rising plugin
 depend:
   - GameMaster
-  - BossbarLib
 commands:
   start:
     description: Starts the game.
