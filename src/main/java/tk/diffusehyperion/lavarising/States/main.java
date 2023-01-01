@@ -88,7 +88,7 @@ public class main implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         if (state == States.MAIN || state == States.OVERTIME) {
             mainTimers.remove(event.getPlayer());
-            event.setQuitMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage"))
+            event.setQuitMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.quitMessage"))
                     .replace("%original%", Objects.requireNonNull(event.getQuitMessage()))
                     .replace("%player%", event.getPlayer().getName())
                     .replace("%left%", String.valueOf(mainTimers.size())));
