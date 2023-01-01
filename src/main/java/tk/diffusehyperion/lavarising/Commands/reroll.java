@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
 import tk.diffusehyperion.gamemaster.GamePlayer;
+import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class reroll implements CommandExecutor, Listener {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.kickPlayer(Objects.requireNonNull(config.getString("game.pregame.rerolling.kickMessage")).replace("%sender%", sender.getName()));
                 }
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
+                GameServer.restart();
             }
         } else if (!(state == PREGAME)) {
             sender.sendMessage("You can only reroll the map before the game starts!");
