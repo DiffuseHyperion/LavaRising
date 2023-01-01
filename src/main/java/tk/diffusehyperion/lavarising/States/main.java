@@ -124,6 +124,6 @@ public class main implements Listener {
     }
 
     public static void overtimewarning() {
-        Bukkit.broadcastMessage(config.getString("game.overtime.warning.message").replace("%threshold%", String.valueOf(config.getInt("overtime.threshold"))));
+        Bukkit.broadcastMessage(config.getString("game.overtime.warning.message").replace("%threshold%", String.valueOf(config.getInt("game.overtime.threshold"))));
     }
 }
