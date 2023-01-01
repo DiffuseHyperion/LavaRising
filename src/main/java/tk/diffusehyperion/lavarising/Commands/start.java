@@ -41,7 +41,7 @@ public class start implements CommandExecutor, Listener {
                             public void run() {
                                 grace.triggerGrace();
                             }
-                }, null, 10, TimerColourParser.getTimerColour("timers.start.name.style")).getValue0();
+                }, null, config.getInt("timers.start.style.size"), TimerColourParser.getTimerColour("timers.start.style")).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     ActionBarSender.sendUpdatingActionBar(p, startingGraceTimer, 2);
                 }

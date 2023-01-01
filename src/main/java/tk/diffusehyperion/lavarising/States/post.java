@@ -48,7 +48,7 @@ public class post implements Listener {
                     GameServer.restart();
                 }
             }
-        }, hashMap, null, TimerColourParser.getTimerColour("timers.post.style")).getValue0();
+        }, hashMap, config.getInt("timers.post.style.size"), TimerColourParser.getTimerColour("timers.post.style")).getValue0();
 
         if (Objects.nonNull(overtimeTimer)) {
             overtimeTimer.getValue0().complete();

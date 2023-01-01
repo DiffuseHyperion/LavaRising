@@ -36,7 +36,7 @@ public class grace implements Listener {
             public void run() {
                 main.triggerMain();
             }
-        }, null, 20, TimerColourParser.getTimerColour("timers.start.style")).getValue0();
+        }, null, config.getInt("timers.start.style.size"), TimerColourParser.getTimerColour("timers.start.style")).getValue0();
         for (Player p : Bukkit.getOnlinePlayers()) {
             ActionBarSender.sendUpdatingActionBar(p, graceTimer, 2);
         }

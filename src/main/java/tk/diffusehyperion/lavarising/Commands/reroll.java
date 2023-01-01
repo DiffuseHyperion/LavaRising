@@ -85,7 +85,7 @@ public class reroll implements CommandExecutor, Listener {
                                 ActionBarSender.sendUpdatingActionBar(p, afterRerollBuffer, 2);
                             }
                         }
-                    }, null, 10, TimerColourParser.getTimerColour("timers.pregame.rerolling.style")).getValue0();
+                    }, null, config.getInt("timers.pregame.rerolling.style.size"), TimerColourParser.getTimerColour("timers.pregame.rerolling.style")).getValue0();
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 ActionBarSender.sendUpdatingActionBar(p, beforeRerollBuffer, 2);

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
 import tk.diffusehyperion.gamemaster.GameMaster;
@@ -68,12 +69,28 @@ public class main implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-
         if (state == States.MAIN || state == States.OVERTIME) {
             mainTimers.remove(event.getEntity());
             event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage"))
                     .replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
                     .replace("%player%", event.getEntity().getName())
+                    .replace("%left%", String.valueOf(mainTimers.size())));
+            GamePlayer.playSoundToAll(deathSounds.get(new Random().nextInt(deathSounds.size())));
+
+            if (mainTimers.size() == 1) {
+                winner = (Player) mainTimers.keySet().toArray()[0];
+                post.triggerPost();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        if (state == States.MAIN || state == States.OVERTIME) {
+            mainTimers.remove(event.getPlayer());
+            event.setQuitMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage"))
+                    .replace("%original%", Objects.requireNonNull(event.getQuitMessage()))
+                    .replace("%player%", event.getPlayer().getName())
                     .replace("%left%", String.valueOf(mainTimers.size())));
             GamePlayer.playSoundToAll(deathSounds.get(new Random().nextInt(deathSounds.size())));
 

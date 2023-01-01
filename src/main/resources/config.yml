@@ -58,6 +58,11 @@ game:
     # Replace the original death message with %original%.
     # Replace the player who died with %player%.
     # Replace the amount of players left with %left%.
+    quitMessage: "%original% and is eliminated! %left% players remaining."
+    # What the disconnect message should be.
+    # Replace the original death message with %original%.
+    # Replace the player who died with %player%.
+    # Replace the amount of players left with %left%.
 
   overtime:
     # Lava does not rise during overtime. Game ends when there is one person left alive!
@@ -99,12 +104,13 @@ timers:
   # Use %time_elapsed% for the amount of seconds elapsed.
   # Chat formatting also works, use § for the formatting.
 
-  # For all config with "style", they specify the style of the timer, specifically the colour and formatting.
+  # For all config with "style", they specify the style of the timer, specifically the colour, size and formatting.
   # Look at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/ChatColor.html
   # style.border refers to the borders of the timer, which are the two brackets ([ and ])
   # style.empty refers to the empty notches in the timer. (|)
   # style.filled refers to the filled notches in the timer. (|)
   # style.delimiter refers to the delimiter between the timer and the message. (/)
+  # style.size refers to the amount of notches in the timer.
   pregame:
     rerolling:
       name: "Rerolling of the map will be enabled in %time_left% seconds."
@@ -118,6 +124,7 @@ timers:
           - GREEN
         delimiter:
           - DARK_GRAY
+        size: 10
   start:
     name: "Starting in %time_left% seconds!"
     style:
@@ -130,6 +137,7 @@ timers:
         - GREEN
       delimiter:
         - DARK_GRAY
+      size: 5
   grace:
     name: "The game is in the grace period! PVP is off. %time_left% seconds left."
     style:
@@ -142,6 +150,7 @@ timers:
         - YELLOW
       delimiter:
         - DARK_GRAY
+      size: 20
   post:
     name: "%winner% has survived! The server will restart in %time_left% seconds."
     # Replace %winner% with the winner of the game.
@@ -155,6 +164,7 @@ timers:
         - BLUE
       delimiter:
         - DARK_GRAY
+      size: 10
 
 debug:
   ignoreConfig:
