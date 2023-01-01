@@ -4,6 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
+import tk.diffusehyperion.gamemaster.GamePlayer;
+import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
@@ -22,9 +24,9 @@ public class post implements Listener {
 
     public static CompletableStringBuffer postTimer;
 
-    public void triggerPost(){
+    public static void triggerPost(){
         state = States.POSTGAME;
-        gm.GamePlayer.playSoundToAll(Sound.FIREWORK_BLAST);
+        GamePlayer.playSoundToAll(Sound.FIREWORK_BLAST);
 
         if (Objects.equals(LavaRising.config.getString("post.creativemode"), "winner")) {
             main.winner.setGameMode(GameMode.CREATIVE);
@@ -37,12 +39,12 @@ public class post implements Listener {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", main.winner.getDisplayName());
 
-        postTimer = gm.GamePlayer.timer(config.getInt("post.duration"), config.getString("post.timername"), new BukkitRunnable() {
+        postTimer = GamePlayer.timer(config.getInt("post.duration"), config.getString("post.timername"), new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.kickPlayer(config.getString("post.kickmessage"));
-                    gm.GameServer.restart();
+                    GameServer.restart();
                 }
             }
         }, hashMap, null, null).getValue0();

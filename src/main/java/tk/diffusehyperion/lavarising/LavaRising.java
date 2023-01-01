@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.diffusehyperion.gamemaster.GameMaster;
 import tk.diffusehyperion.gamemaster.GameServer;
+import tk.diffusehyperion.gamemaster.GameWorld;
 import tk.diffusehyperion.lavarising.Commands.reroll;
 import tk.diffusehyperion.lavarising.Commands.start;
 import tk.diffusehyperion.lavarising.States.States;
@@ -28,15 +28,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-import static tk.diffusehyperion.lavarising.States.main.mainTimers;
-
 public final class LavaRising extends JavaPlugin implements Listener {
     public static FileConfiguration config;
     public static World world;
     public static States state;
     public static Plugin plugin;
-    public static GameMaster gm;
-    ArrayList<Sound> attacksounds = new ArrayList<>();
+    public static ArrayList<Sound> deathSounds = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -51,13 +48,14 @@ public final class LavaRising extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new grace(), this);
         getServer().getPluginManager().registerEvents(new main(), this);
         getServer().getPluginManager().registerEvents(new post(), this);
+
         getServer().getPluginManager().registerEvents(new reroll(), this);
         getServer().getPluginManager().registerEvents(new start(), this);
 
         boolean requireResetConfig;
         boolean requireResetRestart = false;
         try {
-            requireResetConfig = gm.GameServer.checkForServerProperties(config.getBoolean("debug.ignoreconfig.disablespawnprotection"),
+            requireResetConfig = GameServer.checkForServerProperties(config.getBoolean("debug.ignoreconfig.disablespawnprotection"),
                     config.getBoolean("debug.ignoreconfig.disablenether"),
                     config.getBoolean("debug.ignoreconfig.disableend"),
                     config.getBoolean("debug.ignoreconfig.allowflight"));
@@ -66,19 +64,19 @@ public final class LavaRising extends JavaPlugin implements Listener {
         }
         if (config.getBoolean("debug.restartsetup.enabled")) {
             try {
-                requireResetRestart = gm.GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartsetup.os", gm.GameServer.getOS().toString())),
-                        config.getString("debug.restartsetup.jar", gm.GameServer.getServerJar().toString()));
+                requireResetRestart = GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartsetup.os", GameServer.getOS().toString())),
+                        config.getString("debug.restartsetup.jar", GameServer.getServerJar().toString()));
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
         }
 
         if (requireResetConfig || requireResetRestart) {
-            gm.GameServer.restart();
+            GameServer.restart();
         }
 
-        world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
-        gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
+        world = GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
+        GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
     }
 
     @Override
@@ -93,20 +91,20 @@ public final class LavaRising extends JavaPlugin implements Listener {
         plugin = this;
         state = States.PREGAME;
         start.starting = false;
-        attacksounds.add(Sound.SUCCESSFUL_HIT);
-        attacksounds.add(Sound.WITHER_SHOOT);
-        attacksounds.add(Sound.EXPLODE);
-        attacksounds.add(Sound.ANVIL_LAND);
-        attacksounds.add(Sound.AMBIENCE_THUNDER);
+        deathSounds.add(Sound.SUCCESSFUL_HIT);
+        deathSounds.add(Sound.WITHER_SHOOT);
+        deathSounds.add(Sound.EXPLODE);
+        deathSounds.add(Sound.ANVIL_LAND);
+        deathSounds.add(Sound.AMBIENCE_THUNDER);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         switch (state) {
-            case PREGAME -> player.setGameMode(GameMode.ADVENTURE);
-            case GRACE -> player.setGameMode(GameMode.SURVIVAL);
-            case MAIN -> player.setGameMode(GameMode.SPECTATOR);
+            case PREGAME: player.setGameMode(GameMode.ADVENTURE);
+            case GRACE: player.setGameMode(GameMode.SURVIVAL);
+            case MAIN: player.setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -114,30 +112,31 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         switch (state) {
-            case PREGAME -> {
+            case PREGAME:
                 player.setGameMode(GameMode.ADVENTURE);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
-            }
-            case GRACE -> {
+            case GRACE:
                 player.setGameMode(GameMode.SURVIVAL);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
-            }
-            case MAIN , POSTGAME, OVERTIME -> {
+            case MAIN:
                 player.setGameMode(GameMode.SPECTATOR);
-                event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage"))
-                        .replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
-                        .replace("%player%", event.getEntity().getName())
-                        .replace("%left%", String.valueOf(mainTimers.size())));
-                gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(attacksounds.size())));
-            }
+            case OVERTIME:
+                player.setGameMode(GameMode.SPECTATOR);
+            case POSTGAME:
+                event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
+                if (Objects.equals(LavaRising.config.getString("post.creativemode"), "winner") && main.winner.equals(player)) {
+                    player.setGameMode(GameMode.CREATIVE);
+                } else if (Objects.equals(LavaRising.config.getString("post.creativemode"), "all")) {
+                    player.setGameMode(GameMode.CREATIVE);
+                } else {
+                    player.setGameMode(GameMode.ADVENTURE);
+                }
         }
     }
 
     public void onLoad() {
-        gm = (GameMaster) getServer().getPluginManager().getPlugin("GameMaster");
-        assert gm != null;
         try {
-            gm.GameWorld.deleteWorld();
+            GameWorld.deleteWorld();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
+import tk.diffusehyperion.gamemaster.GamePlayer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 
 import java.math.BigDecimal;
@@ -68,7 +69,7 @@ public class reroll implements CommandExecutor, Listener {
             someonejoinedbefore = true;
             int rerollDelay = config.getInt("pregame.rerolling.rerolltimer");
 
-            beforeRerollBuffer = gm.GamePlayer.timer(rerollDelay,
+            beforeRerollBuffer = GamePlayer.timer(rerollDelay,
                     config.getString("pregame.rerolling.beforemessage"),
                     new BukkitRunnable() {
                         @Override

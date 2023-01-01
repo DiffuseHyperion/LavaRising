@@ -18,9 +18,9 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 public class overtime {
 
     public static Pair<CompletableStringBuffer, BukkitRunnable> overtimeTimer;
-    public void triggerOvertime(){
+    public static void triggerOvertime(){
         state = States.OVERTIME;
-        gm.GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
+        GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
 
         overtimeTimer = getOvertimeTimer();
@@ -29,7 +29,7 @@ public class overtime {
         }
     }
 
-    public Pair<CompletableStringBuffer, BukkitRunnable> getOvertimeTimer() {
+    public static Pair<CompletableStringBuffer, BukkitRunnable> getOvertimeTimer() {
         final int duration = config.getInt("overtime.speed");
         final String title = config.getString("overtime.title");
 
@@ -41,7 +41,7 @@ public class overtime {
                 timer[0] = timer[0].subtract(BigDecimal.valueOf(0.1));
 
                 stringBuffer.delete(0, stringBuffer.length());
-                stringBuffer.append(gm.GamePlayer.getTimerStringWLogic(timer[0], duration, null, null));
+                stringBuffer.append(GamePlayer.getTimerStringWLogic(timer[0], duration, null, null));
                 stringBuffer.append(" ");
                 stringBuffer.append(replaceTitle(title, timer[0], BigDecimal.valueOf(duration).subtract(timer[0])));
             }
@@ -50,7 +50,7 @@ public class overtime {
         return new Pair<>(buffer, task);
     }
 
-    private String replaceTitle(String title, BigDecimal timeLeft, BigDecimal timeElapsed) {
+    private static String replaceTitle(String title, BigDecimal timeLeft, BigDecimal timeElapsed) {
         String replacementTitle = title.replace(GamePlayer.timerReplacement.TIME_LEFT.toString(), timeLeft.toString());
         replacementTitle = replacementTitle.replace(GamePlayer.timerReplacement.TIME_ELAPSED.toString(), timeElapsed.toString());
         return replacementTitle;

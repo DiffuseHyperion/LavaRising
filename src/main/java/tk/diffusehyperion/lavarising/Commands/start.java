@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
+import tk.diffusehyperion.gamemaster.GamePlayer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 import tk.diffusehyperion.lavarising.States.States;
 import tk.diffusehyperion.lavarising.States.grace;
@@ -33,18 +34,20 @@ public class start implements CommandExecutor, Listener {
             reroll.afterRerollBuffer.complete();
 
             if (config.getBoolean("pregame.start.countdown")) {
-                startingGraceTimer = gm.GamePlayer.timer(config.getInt("pregame.start.timer"),
+                startingGraceTimer = GamePlayer.timer(config.getInt("pregame.start.timer"),
                         config.getString("pregame.start.timername"),
                         new BukkitRunnable(){
                             @Override
                             public void run() {
+                                Bukkit.getLogger().info("triggering grace from task");
                                 grace.triggerGrace();
                             }
-                }, null, null, null).getValue0();
+                }, null, 5, null).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     ActionBarSender.sendUpdatingActionBar(p, startingGraceTimer, 2);
                 }
             } else {
+                Bukkit.getLogger().info("triggering grace directly");
                 grace.triggerGrace();
             }
         }
