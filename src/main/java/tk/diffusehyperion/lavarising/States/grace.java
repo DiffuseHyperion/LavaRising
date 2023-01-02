@@ -15,8 +15,8 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class grace {
 
-    public void triggerGrace(){
-        state = "grace";
+    public static void triggerGrace(){
+        state = States.GRACE;
         for (Player p: Bukkit.getOnlinePlayers()) {
             p.setGameMode(GameMode.SURVIVAL);
             p.setHealth(20);
@@ -29,7 +29,7 @@ public class grace {
         BossBar bossbar = gm.GamePlayer.timer(config.getInt("grace.duration"), config.getString("grace.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
             @Override
             public void run() {
-                new main().triggerMain();
+                main.triggerMain();
             }
         }).getValue0();
         for (Player p : Bukkit.getOnlinePlayers()) {

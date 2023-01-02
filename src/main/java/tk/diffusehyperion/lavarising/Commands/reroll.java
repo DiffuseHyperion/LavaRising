@@ -21,14 +21,15 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
 import static tk.diffusehyperion.lavarising.Commands.start.starting;
+import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.States.PREGAME;
 
 public class reroll implements CommandExecutor, Listener {
 
-    int agreedplayers = 0;
-    int requiredplayers;
-    ArrayList<Player> agreedlist = new ArrayList<>();
+    public static int agreedplayers = 0;
+    public static int requiredplayers;
+    public static ArrayList<Player> agreedlist = new ArrayList<>();
     static boolean allowedtoreroll = false;
     static boolean someonejoinedbefore = false;
 
@@ -42,7 +43,7 @@ public class reroll implements CommandExecutor, Listener {
         if (requiredplayers == 0) {
            requiredplayers = 1;
         }
-        if (Objects.equals(state, "pregame") && sender instanceof Player && config.getBoolean("pregame.rerolling.enabled") && !agreedlist.contains(sender) && allowedtoreroll && !starting) {
+        if (state == PREGAME && sender instanceof Player && config.getBoolean("pregame.rerolling.enabled") && !agreedlist.contains(sender) && allowedtoreroll && !starting) {
             agreedlist.add((Player) sender);
             agreedplayers++;
             if (agreedplayers < requiredplayers) {
@@ -53,7 +54,7 @@ public class reroll implements CommandExecutor, Listener {
                 }
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
             }
-        } else if (!Objects.equals(state, "pregame")) {
+        } else if (!(state == PREGAME)) {
             sender.sendMessage("You can only reroll the map before the game starts!");
         } else if (!(sender instanceof Player)) {
             sender.sendMessage("You can only run this command as a player!");
@@ -93,7 +94,7 @@ public class reroll implements CommandExecutor, Listener {
             rerollBossbar1 = pair.getValue0();
             rerollTask1 = pair.getValue1();
             rerollBossbar1.addPlayer(event.getPlayer());
-        } else if (Objects.equals(state, "pregame")) {
+        } else if (state == PREGAME) {
             Player p = event.getPlayer();
             if (allowedtoreroll) {
                 requiredplayers = BigDecimal.valueOf(config.getInt("pregame.rerolling.percentagetopass")).multiply(BigDecimal.valueOf(Bukkit.getOnlinePlayers().size())).divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN).intValue();

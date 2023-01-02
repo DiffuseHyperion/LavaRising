@@ -11,14 +11,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 public class overtime {
-    public void triggerOvertime(){
+    public static void triggerOvertime() {
+        state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
-        state = "overtime";
         world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
         BossBar bossbar = Bukkit.createBossBar(config.getString("overtime.bartitle"), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -32,7 +31,7 @@ public class overtime {
                     timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
                 }
                 bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
-                if (Objects.equals(state, "post")) {
+                if (state == States.POST) {
                     bossbar.removeAll();
                     this.cancel();
                 }

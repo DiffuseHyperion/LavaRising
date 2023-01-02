@@ -23,7 +23,7 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 public class start implements CommandExecutor, Listener {
 
     public static boolean starting;
-    static BossBar bossbar;
+    public static BossBar bossbar;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
@@ -43,14 +43,14 @@ public class start implements CommandExecutor, Listener {
                 bossbar = gm.GamePlayer.timer(5, config.getString("pregame.start.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
                     @Override
                     public void run() {
-                        new grace().triggerGrace();
+                        grace.triggerGrace();
                     }
                 }).getValue0();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     bossbar.addPlayer(p);
                 }
             } else {
-                new grace().triggerGrace();
+                grace.triggerGrace();
             }
         }
         return true;

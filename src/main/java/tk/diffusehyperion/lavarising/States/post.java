@@ -16,10 +16,9 @@ import java.util.Objects;
 import static tk.diffusehyperion.lavarising.LavaRising.gm;
 
 public class post {
-
-    public void triggerPost(){
+    public static void triggerPost(){
+        LavaRising.state = States.POST;
         gm.GamePlayer.playSoundToAll(Sound.UI_TOAST_CHALLENGE_COMPLETE);
-        LavaRising.state = "post";
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", main.winner.getDisplayName());
         BossBar bossbar = gm.GamePlayer.customTimer(LavaRising.config.getInt("post.duration"), LavaRising.config.getString("post.timername"), BarColor.WHITE, BarStyle.SOLID, hashMap, new BukkitRunnable() {

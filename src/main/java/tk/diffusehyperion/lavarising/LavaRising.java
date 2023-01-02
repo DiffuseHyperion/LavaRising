@@ -1,8 +1,9 @@
 package tk.diffusehyperion.lavarising;
 
-import tk.diffusehyperion.lavarising.Commands.reroll;
-import tk.diffusehyperion.lavarising.Commands.start;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -15,22 +16,25 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.diffusehyperion.gamemaster.GameMaster;
 import tk.diffusehyperion.gamemaster.GameServer;
+import tk.diffusehyperion.lavarising.Commands.reroll;
+import tk.diffusehyperion.lavarising.Commands.start;
+import tk.diffusehyperion.lavarising.States.States;
 import tk.diffusehyperion.lavarising.States.main;
-
-import static tk.diffusehyperion.lavarising.States.main.bossbars;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
+import static tk.diffusehyperion.lavarising.States.main.bossbars;
+
 public final class LavaRising extends JavaPlugin implements Listener {
     public static FileConfiguration config;
     public static World world;
-    public static String state;
+    public static States state;
     public static Plugin plugin;
     public static GameMaster gm;
-    ArrayList<Sound> attacksounds = new ArrayList<>();
+    public static ArrayList<Sound> attacksounds = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -93,7 +97,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
     public void setupFields() {
         plugin = this;
-        state = "pregame";
+        state = States.PREGAME;
         start.starting = false;
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_CRIT);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK);
@@ -105,9 +109,9 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         switch (state) {
-            case "pregame" -> player.setGameMode(GameMode.ADVENTURE);
-            case "grace", "starter" -> player.setGameMode(GameMode.SURVIVAL);
-            case "main" -> player.setGameMode(GameMode.SPECTATOR);
+            case PREGAME -> player.setGameMode(GameMode.ADVENTURE);
+            case GRACE -> player.setGameMode(GameMode.SURVIVAL);
+            case MAIN -> player.setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -115,15 +119,15 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         switch (state) {
-            case "pregame" -> {
+            case PREGAME -> {
                 player.setGameMode(GameMode.ADVENTURE);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
-            case "grace" -> {
+            case GRACE -> {
                 player.setGameMode(GameMode.SURVIVAL);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
-            case "main", "post", "overtime" -> {
+            case MAIN, POST, OVERTIME -> {
                 player.setGameMode(GameMode.SPECTATOR);
                 bossbars.remove(player);
                 event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
