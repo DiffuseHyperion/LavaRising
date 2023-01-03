@@ -82,4 +82,15 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>diffusehyperion-maven-repo</id>
+            <url>bs://diffusehyperion/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>diffusehyperion-maven-repo</id>
+            <url>bs://diffusehyperion/releases</url>
+        </repository>
+    </distributionManagement>
 </project>

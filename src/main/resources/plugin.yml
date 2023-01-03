@@ -1,7 +1,6 @@
 name: LavaRising
 version: '${project.version}'
 main: tk.diffusehyperion.lavarising.LavaRising
-api-version: 1.13
 description: average lava rising plugin
 depend:
   - GameMaster
