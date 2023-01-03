@@ -56,7 +56,7 @@
     <repositories>
         <repository>
             <id>GameMaster-repo</id>
-            <url>https://github.com/DiffuseHyperion/GameMaster/raw/repository</url>
+            <url>https://diffusehyperion.blob.core.windows.net/releases</url>
         </repository>
         <repository>
             <id>spigotmc-repo</id>
