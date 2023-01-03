@@ -51,6 +51,13 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <extensions>
+            <extension>
+                <groupId>com.gkatzioura.maven.cloud</groupId>
+                <artifactId>azure-storage-wagon</artifactId>
+                <version>1.8</version>
+            </extension>
+        </extensions>
     </build>
 
     <repositories>
