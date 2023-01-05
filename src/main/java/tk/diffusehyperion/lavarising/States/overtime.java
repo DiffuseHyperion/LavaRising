@@ -18,8 +18,11 @@ public class overtime {
     public static void triggerOvertime() {
         state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
-        world.getWorldBorder().setSize(config.getInt("overtime.finalbordersize"), config.getInt("overtime.speed"));
-        BossBar bossbar = Bukkit.createBossBar(config.getString("overtime.bartitle"), BarColor.RED, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
+        world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
+        BossBar bossbar = Bukkit.createBossBar(config.getString("timers.overtime.name"),
+                BarColor.valueOf(config.getString("timers.overtime.colour")),
+                BarStyle.valueOf(config.getString("timers.overtime.style")),
+                BarFlag.PLAY_BOSS_MUSIC);
         for (Player p : Bukkit.getOnlinePlayers()) {
             bossbar.addPlayer(p);
         }
@@ -27,10 +30,10 @@ public class overtime {
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
-                if (timer[0] != config.getInt("overtime.speed")) {
+                if (timer[0] != config.getInt("game.overtime.speed")) {
                     timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
                 }
-                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
+                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("game.overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
                 if (state == States.POST) {
                     bossbar.removeAll();
                     this.cancel();

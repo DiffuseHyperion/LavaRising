@@ -39,8 +39,11 @@ public class start implements CommandExecutor, Listener {
             if (!Objects.isNull(rerollBossbar2)) {
                 rerollBossbar2.removeAll();
             }
-            if (config.getBoolean("pregame.start.countdown")) {
-                bossbar = gm.GamePlayer.timer(5, config.getString("pregame.start.timername"), BarColor.GREEN, BarStyle.SOLID, new BukkitRunnable() {
+            if (config.getBoolean("game.pregame.start.countdown")) {
+                bossbar = gm.GamePlayer.timer(config.getInt("game.pregame.start.timer"), config.getString("timers.pregame.start.name"),
+                        BarColor.valueOf(config.getString("timers.pregame.start.colour")),
+                        BarStyle.valueOf(config.getString("timers.pregame.start.style")),
+                        new BukkitRunnable() {
                     @Override
                     public void run() {
                         grace.triggerGrace();

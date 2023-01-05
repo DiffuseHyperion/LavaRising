@@ -57,17 +57,18 @@ public final class LavaRising extends JavaPlugin implements Listener {
         boolean requireResetConfig;
         boolean requireResetRestart = false;
         try {
-            requireResetConfig = gm.GameServer.checkForServerProperties(config.getBoolean("debug.ignoreconfig.disablespawnprotection"),
-                    config.getBoolean("debug.ignoreconfig.disablenether"),
-                    config.getBoolean("debug.ignoreconfig.disableend"),
-                    config.getBoolean("debug.ignoreconfig.allowflight"));
+            requireResetConfig = gm.GameServer.checkForServerProperties(
+                    config.getBoolean("debug.ignoreConfig.disableSpawnProtection"),
+                    config.getBoolean("debug.ignoreConfig.disableNether"),
+                    config.getBoolean("debug.ignoreConfig.disableEnd"),
+                    config.getBoolean("debug.ignoreConfig.allowFlight"));
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
-        if (config.getBoolean("debug.restartsetup.enabled")) {
+        if (config.getBoolean("debug.restartSetup.enabled")) {
             try {
-                requireResetRestart = gm.GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartsetup.os", gm.GameServer.getOS().toString())),
-                        config.getString("debug.restartsetup.jar", gm.GameServer.getServerJar().toString()));
+                requireResetRestart = gm.GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", gm.GameServer.getOS().toString())),
+                        config.getString("debug.restartSetup.jar", gm.GameServer.getServerJar().toString()));
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
@@ -77,8 +78,8 @@ public final class LavaRising extends JavaPlugin implements Listener {
             gm.GameServer.restart();
         }
 
-        world = gm.GameWorld.createWorld(config.getString("pregame.worldname"), config.getLong("pregame.seed", new Random().nextLong()));
-        gm.GameWorld.setupWorld(world, true, config.getDouble("pregame.bordersize"), 0, 0, 0);
+        world = gm.GameWorld.createWorld(config.getString("game.pregame.worldName"), config.getLong("game.pregame.seed", new Random().nextLong()));
+        gm.GameWorld.setupWorld(world, true, config.getDouble("game.pregame.borderSize"), 0, 0, 0);
     }
 
     @Override
@@ -130,7 +131,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
             case MAIN, POST, OVERTIME -> {
                 player.setGameMode(GameMode.SPECTATOR);
                 bossbars.remove(player);
-                event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("main.deathmessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
+                event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
                         .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(bossbars.size())));
                 gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
             }
