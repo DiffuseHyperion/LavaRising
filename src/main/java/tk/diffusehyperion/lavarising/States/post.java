@@ -15,6 +15,8 @@ import java.util.Objects;
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 import static tk.diffusehyperion.lavarising.States.main.lavaRiser;
 import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
+import static tk.diffusehyperion.lavarising.States.overtime.overtimeBossbar;
+import static tk.diffusehyperion.lavarising.States.overtime.overtimeTask;
 
 public class post {
     public static void triggerPost(Player winner){
@@ -22,6 +24,8 @@ public class post {
         gm.GamePlayer.playSoundToAll(Sound.UI_TOAST_CHALLENGE_COMPLETE);
 
         lavaRiser.cancel();
+        overtimeBossbar.removeAll();
+        overtimeTask.cancel();
 
         for (BossBar b : mainBossbars.values()) {
             b.removeAll();

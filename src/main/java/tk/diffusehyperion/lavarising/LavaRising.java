@@ -1,9 +1,6 @@
 package tk.diffusehyperion.lavarising;
 
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -163,8 +160,11 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
                 gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
 
-                if (mainBossbars.size() == 1) {
+                if (mainBossbars.size() <= 1) {
                     winner = (Player) mainBossbars.keySet().toArray()[0];
+                    if (Objects.isNull(winner)) {
+                        Bukkit.getLogger().severe("Something went wrong when getting the winner of the game!");
+                    }
                     post.triggerPost(winner);
                 }
             }

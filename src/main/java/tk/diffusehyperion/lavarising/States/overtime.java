@@ -16,6 +16,9 @@ import static tk.diffusehyperion.lavarising.LavaRising.*;
 import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public class overtime {
+
+    public static BossBar overtimeBossbar;
+    public static BukkitRunnable overtimeTask;
     public static void triggerOvertime() {
         state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
@@ -26,27 +29,23 @@ public class overtime {
         mainBossbars.clear();
 
         world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
-        BossBar bossbar = Bukkit.createBossBar(config.getString("timers.overtime.name"),
+        overtimeBossbar = Bukkit.createBossBar(config.getString("timers.overtime.name"),
                 BarColor.valueOf(config.getString("timers.overtime.colour")),
                 BarStyle.valueOf(config.getString("timers.overtime.style")),
                 BarFlag.PLAY_BOSS_MUSIC);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            bossbar.addPlayer(p);
+            overtimeBossbar.addPlayer(p);
         }
         double[] timer = {0};
-        BukkitRunnable task = new BukkitRunnable() {
+        overtimeTask = new BukkitRunnable() {
             @Override
             public void run() {
                 if (timer[0] != config.getInt("game.overtime.speed")) {
                     timer[0] = BigDecimal.valueOf(timer[0]).add(BigDecimal.valueOf(0.1)).doubleValue();
                 }
-                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("game.overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
-                if (state == States.POST) {
-                    bossbar.removeAll();
-                    this.cancel();
-                }
+                overtimeBossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("game.overtime.speed")), 2, RoundingMode.HALF_EVEN).doubleValue());
             }
         };
-        task.runTaskTimer(plugin, 0, 2);
+        overtimeTask.runTaskTimer(plugin, 0, 2);
     }
 }
