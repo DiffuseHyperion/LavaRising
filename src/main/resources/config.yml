@@ -164,5 +164,5 @@ debug:
     jar: spigot-1.17.1.jar
     # The name of the server jar. Leave blank to let the plugin detect automatically, although this is prone to fail.
     # Include .jar at the end!
-  warnings: false
-  # Set this to true to ignore explanations from the plugin about missing files.
+  warnings: true
+  # Set this to false to ignore explanations from the plugin about missing files.

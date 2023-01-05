@@ -19,14 +19,14 @@ import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.lavarising.Commands.reroll;
 import tk.diffusehyperion.lavarising.Commands.start;
 import tk.diffusehyperion.lavarising.States.States;
-import tk.diffusehyperion.lavarising.States.main;
+import tk.diffusehyperion.lavarising.States.post;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-import static tk.diffusehyperion.lavarising.States.main.bossbars;
+import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public final class LavaRising extends JavaPlugin implements Listener {
     public static FileConfiguration config;
@@ -34,6 +34,8 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public static States state;
     public static Plugin plugin;
     public static GameMaster gm;
+
+    public static Player winner;
     public static ArrayList<Sound> attacksounds = new ArrayList<>();
 
     @Override
@@ -50,7 +52,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
         // Objects.requireNonNull(this.getCommand("state")).setExecutor(new debugstate());
         Objects.requireNonNull(this.getCommand("reroll")).setExecutor(new reroll());
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new main(), this);
         getServer().getPluginManager().registerEvents(new reroll(), this);
         getServer().getPluginManager().registerEvents(new start(), this);
 
@@ -94,6 +95,20 @@ public final class LavaRising extends JavaPlugin implements Listener {
         if (config.getBoolean("debug.warnings")) {
             getLogger().warning("Below this line (unless there are other plugins), minecraft will complain about not being able to save the leaving person's data. This is ok, and can be ignored.");
         }
+        if (state == States.OVERTIME || state == States.MAIN) {
+            Player player = event.getPlayer();
+            mainBossbars.remove(player);
+
+            event.setQuitMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage")).replace("%original%", Objects.requireNonNull(event.getQuitMessage()))
+                    .replace("%player%", event.getPlayer().getName()).replace("%left%", String.valueOf(mainBossbars.size())));
+
+            gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
+
+            if (mainBossbars.size() == 1) {
+                winner = (Player) mainBossbars.keySet().toArray()[0];
+                post.triggerPost(winner);
+            }
+        }
     }
 
     public void setupFields() {
@@ -112,7 +127,18 @@ public final class LavaRising extends JavaPlugin implements Listener {
         switch (state) {
             case PREGAME -> player.setGameMode(GameMode.ADVENTURE);
             case GRACE -> player.setGameMode(GameMode.SURVIVAL);
-            case MAIN -> player.setGameMode(GameMode.SPECTATOR);
+            case MAIN, OVERTIME -> player.setGameMode(GameMode.SPECTATOR);
+            case POST -> setPostGamemode(player);
+        }
+    }
+
+    private void setPostGamemode(Player player) {
+        if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "winner") && winner.equals(player)) {
+            player.setGameMode(GameMode.CREATIVE);
+        } else if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "all")) {
+            player.setGameMode(GameMode.CREATIVE);
+        } else {
+            player.setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -128,12 +154,23 @@ public final class LavaRising extends JavaPlugin implements Listener {
                 player.setGameMode(GameMode.SURVIVAL);
                 event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
-            case MAIN, POST, OVERTIME -> {
+            case MAIN, OVERTIME -> {
                 player.setGameMode(GameMode.SPECTATOR);
-                bossbars.remove(player);
+                mainBossbars.remove(player);
+
                 event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
-                        .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(bossbars.size())));
+                        .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(mainBossbars.size())));
+
                 gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
+
+                if (mainBossbars.size() == 1) {
+                    winner = (Player) mainBossbars.keySet().toArray()[0];
+                    post.triggerPost(winner);
+                }
+            }
+            case POST -> {
+                setPostGamemode(player);
+                event.setDeathMessage(ChatColor.YELLOW + event.getDeathMessage());
             }
         }
     }

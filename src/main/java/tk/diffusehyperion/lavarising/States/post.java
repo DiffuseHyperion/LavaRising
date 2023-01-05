@@ -15,14 +15,20 @@ import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.config;
 import static tk.diffusehyperion.lavarising.LavaRising.gm;
+import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public class post {
-    public static void triggerPost(){
+    public static void triggerPost(Player winner){
         LavaRising.state = States.POST;
         gm.GamePlayer.playSoundToAll(Sound.UI_TOAST_CHALLENGE_COMPLETE);
 
+        for (BossBar b : mainBossbars.values()) {
+            b.removeAll();
+        }
+        mainBossbars.clear();
+
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("%winner%", main.winner.getDisplayName());
+        hashMap.put("%winner%", winner.getDisplayName());
 
         BossBar bossbar = gm.GamePlayer.customTimer(LavaRising.config.getInt("game.post.duration"),
                 LavaRising.config.getString("timers.post.name"),
@@ -42,7 +48,7 @@ public class post {
             bossbar.addPlayer(p);
         }
         if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "winner")) {
-            main.winner.setGameMode(GameMode.CREATIVE);
+            winner.setGameMode(GameMode.CREATIVE);
         } else if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "all")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.setGameMode(GameMode.CREATIVE);

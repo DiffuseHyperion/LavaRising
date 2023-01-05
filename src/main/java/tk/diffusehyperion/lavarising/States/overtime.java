@@ -13,11 +13,18 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public class overtime {
     public static void triggerOvertime() {
         state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
+
+        for (BossBar b : mainBossbars.values()) {
+            b.removeAll();
+        }
+        mainBossbars.clear();
+
         world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
         BossBar bossbar = Bukkit.createBossBar(config.getString("timers.overtime.name"),
                 BarColor.valueOf(config.getString("timers.overtime.colour")),

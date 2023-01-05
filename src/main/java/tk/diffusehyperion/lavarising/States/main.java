@@ -1,6 +1,5 @@
 package tk.diffusehyperion.lavarising.States;
 
-import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,10 +9,8 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import tk.diffusehyperion.lavarising.LavaRising;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,11 +19,10 @@ import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
-public class main implements Listener {
+public class main {
 
-    public static HashMap<Player, BossBar> bossbars = new HashMap<>();
+    public static HashMap<Player, BossBar> mainBossbars = new HashMap<>();
     public static int lavaheight;
-    public static Player winner;
     public static double[] timer;
 
     public static void triggerMain(){
@@ -78,33 +74,22 @@ public class main implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if (state == States.MAIN || state == States.OVERTIME) {
-            bossbars.remove(event.getEntity());
-            if (bossbars.size() == 1) {
-                winner = (Player) bossbars.keySet().toArray()[0];
-                post.triggerPost();
-            }
-        }
-    }
-
     public static void mainTimer(Player player) {
         BossBar bossbar = Bukkit.createBossBar(LavaRising.config.getString("timers.main.name"),
                 BarColor.valueOf(config.getString("timers.main.colour")),
                 BarStyle.valueOf(config.getString("timers.main.style")),
                 BarFlag.PLAY_BOSS_MUSIC);
-        bossbars.put(player, bossbar);
+        mainBossbars.put(player, bossbar);
         bossbar.addPlayer(player);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
                 bossbar.setTitle(Objects.requireNonNull(LavaRising.config.getString("timers.main.name")).replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight)).replace("%level%", String.valueOf(lavaheight)));
+                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("game.main.lavaInterval")), 2, RoundingMode.HALF_EVEN).doubleValue());
                 if (state == States.OVERTIME || state == States.POST) {
                     bossbar.removeAll();
                     this.cancel();
                 }
-                bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(LavaRising.config.getInt("game.main.lavaInterval")), 2, RoundingMode.HALF_EVEN).doubleValue());
             }
         };
         task.runTaskTimer(LavaRising.plugin, 0, 2);
