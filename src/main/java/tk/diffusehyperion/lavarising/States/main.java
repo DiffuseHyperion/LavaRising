@@ -10,6 +10,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.javatuples.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,7 +22,7 @@ import static tk.diffusehyperion.lavarising.States.overtime.triggerOvertime;
 
 public class main {
 
-    public static HashMap<Player, BossBar> mainBossbars = new HashMap<>();
+    public static HashMap<Player, Pair<BossBar, BukkitRunnable>> mainBossbars = new HashMap<>();
     public static int lavaheight;
     public static double[] timer;
     public static BukkitRunnable lavaRiser;
@@ -77,19 +78,15 @@ public class main {
                 BarColor.valueOf(config.getString("timers.main.colour")),
                 BarStyle.valueOf(config.getString("timers.main.style")),
                 BarFlag.PLAY_BOSS_MUSIC);
-        mainBossbars.put(player, bossbar);
         bossbar.addPlayer(player);
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
                 bossbar.setTitle(Objects.requireNonNull(config.getString("timers.main.name")).replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight)).replace("%level%", String.valueOf(lavaheight)));
                 bossbar.setProgress(BigDecimal.valueOf(timer[0]).divide(BigDecimal.valueOf(config.getInt("game.main.lavaInterval")), 2, RoundingMode.HALF_EVEN).doubleValue());
-                if (state == States.OVERTIME || state == States.POST) {
-                    bossbar.removeAll();
-                    this.cancel();
-                }
             }
         };
+        mainBossbars.put(player, new Pair<>(bossbar, task));
         task.runTaskTimer(plugin, 0, 2);
     }
 }

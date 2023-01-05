@@ -8,6 +8,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.javatuples.Pair;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -27,10 +28,10 @@ public class post {
         overtimeBossbar.removeAll();
         overtimeTask.cancel();
 
-        for (BossBar b : mainBossbars.values()) {
-            b.removeAll();
+        for (Pair<BossBar, BukkitRunnable> pair : mainBossbars.values()) {
+            pair.getValue0().removeAll();
+            pair.getValue1().cancel();
         }
-        mainBossbars.clear();
 
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", winner.getDisplayName());

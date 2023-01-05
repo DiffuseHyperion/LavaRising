@@ -8,6 +8,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.javatuples.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,10 +24,10 @@ public class overtime {
         state = States.OVERTIME;
         gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
 
-        for (BossBar b : mainBossbars.values()) {
-            b.removeAll();
+        for (Pair<BossBar, BukkitRunnable> pair : mainBossbars.values()) {
+            pair.getValue0().removeAll();
+            pair.getValue1().cancel();
         }
-        mainBossbars.clear();
 
         world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
         overtimeBossbar = Bukkit.createBossBar(config.getString("timers.overtime.name"),

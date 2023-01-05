@@ -162,9 +162,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
 
                 if (mainBossbars.size() <= 1) {
                     winner = (Player) mainBossbars.keySet().toArray()[0];
-                    if (Objects.isNull(winner)) {
-                        Bukkit.getLogger().severe("Something went wrong when getting the winner of the game!");
-                    }
                     post.triggerPost(winner);
                 }
             }
