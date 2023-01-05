@@ -51,6 +51,13 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <extensions>
+            <extension>
+                <groupId>com.gkatzioura.maven.cloud</groupId>
+                <artifactId>azure-storage-wagon</artifactId>
+                <version>1.8</version>
+            </extension>
+        </extensions>
     </build>
 
     <repositories>
@@ -63,16 +70,8 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>diffusehyperion-github-repo</id>
-            <url>https://raw.githubusercontent.com/DiffuseHyperion/maven-repository/master/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
+            <id>GameMaster-repo</id>
+            <url>https://diffusehyperion.blob.core.windows.net/releases</url>
         </repository>
     </repositories>
 
@@ -90,4 +89,15 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>diffusehyperion-maven-repo</id>
+            <url>bs://diffusehyperion/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>diffusehyperion-maven-repo</id>
+            <url>bs://diffusehyperion/releases</url>
+        </repository>
+    </distributionManagement>
 </project>
