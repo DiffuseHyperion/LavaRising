@@ -25,9 +25,6 @@ game:
       # How long to wait before rerolling is enabled. Unit is seconds.
       percentageToPass: 80
       # How many players need to agree on a reroll to reroll the map.
-      rerollingEnabled: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
-      # Action bar message to show when rerolling is enabled.
-      # Replace %required% with the amount of votes required to reroll the map.
       kickMessage: "%sender% wants to reroll the map! Map is now being rerolled. Join back soon!"
       # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
       # Replace %sender% with the final person's decision to reroll the map.
@@ -107,6 +104,12 @@ timers:
       name: "Rerolling of the map will be enabled in %time_left% seconds."
       colour: WHITE
       style: SEGMENTED_6
+    enabled:
+      name: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
+      # Replace %required% with the amount of votes required to reroll the map.
+      # No other placeholders allowed.
+      colour: WHITE
+      style: SOLID
     start:
       name: "Starting in %time_left% seconds!"
       colour: GREEN

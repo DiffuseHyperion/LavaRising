@@ -85,8 +85,11 @@ public class reroll implements CommandExecutor, Listener {
                         requiredplayers = 1;
                     }
 
-                    rerollBossbar2 = Bukkit.createBossBar(Objects.requireNonNull(config.getString("timers.pregame.rerolling.name")).replace("%required%", String.valueOf(requiredplayers)),
-                            BarColor.YELLOW, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
+                    rerollBossbar2 = Bukkit.createBossBar(
+                            Objects.requireNonNull(config.getString("timers.pregame.enabled.name")).replace("%required%", String.valueOf(requiredplayers)),
+                            BarColor.valueOf(config.getString("timers.pregame.enabled.colour")),
+                            BarStyle.valueOf(config.getString("timers.pregame.enabled.style")),
+                            BarFlag.PLAY_BOSS_MUSIC);
                     rerollBossbar2.setProgress(1);
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         rerollBossbar2.addPlayer(p);
