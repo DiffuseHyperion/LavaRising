@@ -29,32 +29,38 @@ public class start implements CommandExecutor, Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
         if (Bukkit.getServer().getOnlinePlayers().size() == 1) {
             sender.sendMessage("There is not enough players...");
+            return true;
+        }
+
+        if (starting) {
+            sender.sendMessage("The game is already starting!");
+            return true;
+        }
+
+        starting = true;
+        sender.sendMessage("Start command received!");
+        if (!Objects.isNull(rerollBossbar1)) {
+            rerollBossbar1.removeAll();
+            rerollTask1.cancel();
+        }
+        if (!Objects.isNull(rerollBossbar2)) {
+            rerollBossbar2.removeAll();
+        }
+        if (config.getBoolean("game.pregame.start.countdown")) {
+            bossbar = gm.GamePlayer.timer(config.getInt("game.pregame.start.timer"), config.getString("timers.pregame.start.name"),
+                    BarColor.valueOf(config.getString("timers.pregame.start.colour")),
+                    BarStyle.valueOf(config.getString("timers.pregame.start.style")),
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            grace.triggerGrace();
+                        }
+                    }).getValue0();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                bossbar.addPlayer(p);
+            }
         } else {
-            starting = true;
-            sender.sendMessage("Start command received!");
-            if (!Objects.isNull(rerollBossbar1)) {
-                rerollBossbar1.removeAll();
-                rerollTask1.cancel();
-            }
-            if (!Objects.isNull(rerollBossbar2)) {
-                rerollBossbar2.removeAll();
-            }
-            if (config.getBoolean("game.pregame.start.countdown")) {
-                bossbar = gm.GamePlayer.timer(config.getInt("game.pregame.start.timer"), config.getString("timers.pregame.start.name"),
-                        BarColor.valueOf(config.getString("timers.pregame.start.colour")),
-                        BarStyle.valueOf(config.getString("timers.pregame.start.style")),
-                        new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        grace.triggerGrace();
-                    }
-                }).getValue0();
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    bossbar.addPlayer(p);
-                }
-            } else {
-                grace.triggerGrace();
-            }
+            grace.triggerGrace();
         }
         return true;
     }
