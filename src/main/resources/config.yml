@@ -121,7 +121,7 @@ timers:
   main:
     name: "The game is in the main period! Lava is at %level%, you are %distance% blocks away."
     colour: RED
-    style: SEGMENTED_20
+    style: SEGMENTED_6
     # This timer is special - it counts down when the next lava rise will occur, and will keep repeating until either the game goes into overtime or ends.
     # Replace %distance% with the distance a player is from the lava y-level.
     # Replace %level% with the lava y-level.

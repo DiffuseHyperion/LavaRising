@@ -68,7 +68,7 @@ public class main implements Listener {
         }
         if (LavaRising.config.getBoolean("game.overtime.warning.enabled")) {
             BossBar bossbar = gm.GamePlayer.timer(config.getInt("game.overtime.warning.time"),
-                    config.getString("timers.overtime.warning.message"),
+                    config.getString("timers.overtime.warning.name"),
                     BarColor.valueOf(config.getString("timers.overtime.warning.colour")),
                     BarStyle.valueOf(config.getString("timers.overtime.warning.style"))).getValue0();
 
