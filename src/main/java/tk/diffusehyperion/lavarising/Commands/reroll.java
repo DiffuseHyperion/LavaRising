@@ -107,7 +107,7 @@ public class reroll implements CommandExecutor, Listener {
                 if (requiredplayers == 0) {
                     requiredplayers = 1;
                 }
-                rerollBossbar2.setTitle(Objects.requireNonNull(config.getString("timers.pregame.rerolling.name")).replace("%required%", String.valueOf(requiredplayers)));
+                rerollBossbar2.setTitle(Objects.requireNonNull(config.getString("timers.pregame.enabled.name")).replace("%required%", String.valueOf(requiredplayers)));
                 rerollBossbar2.addPlayer(p);
             } else {
                 rerollBossbar1.addPlayer(p);
