@@ -1,6 +1,7 @@
 package tk.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -37,7 +38,7 @@ public class overtime {
 
     public static Pair<CompletableStringBuffer, BukkitRunnable> getOvertimeTimer() {
         final int duration = config.getInt("game.overtime.speed");
-        final String title = config.getString("game.overtime.title");
+        final String title = config.getString("timers.overtime.name");
 
         final BigDecimal[] timer = new BigDecimal[]{BigDecimal.valueOf(duration).setScale(1, RoundingMode.HALF_UP)};
         final CompletableStringBuffer buffer = new CompletableStringBuffer();
@@ -49,6 +50,11 @@ public class overtime {
                 stringBuffer.delete(0, stringBuffer.length());
                 stringBuffer.append(GamePlayer.getTimerStringWLogic(timer[0], duration, null, null));
                 stringBuffer.append(" ");
+                stringBuffer.append(ChatColor.RESET);
+                for (String s : config.getStringList("timers.overtime.style.delimeter")) {
+                    stringBuffer.append(s);
+                }
+                stringBuffer.append(ChatColor.RESET);
                 stringBuffer.append(replaceTitle(title, timer[0], BigDecimal.valueOf(duration).subtract(timer[0])));
             }
         };

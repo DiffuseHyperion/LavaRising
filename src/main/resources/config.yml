@@ -151,17 +151,30 @@ timers:
       delimiter:
         - DARK_GRAY
       size: 20
+  overtime:
+    name: "OVERTIME! Lava is paused. Border will shrink slowly to the middle. Last one alive wins!"
+    style:
+      border:
+        - DARK_RED
+        - BOLD
+      empty:
+        - GRAY
+      filled:
+        - RED
+      delimiter:
+        - DARK_GRAY
+      size: 20
   post:
     name: "%winner% has survived! The server will restart in %time_left% seconds."
     # Replace %winner% with the winner of the game.
     style:
       border:
-        - DARK_BLUE
+        - DARK_GREEN
         - BOLD
       empty:
         - GRAY
       filled:
-        - BLUE
+        - GREEN
       delimiter:
         - DARK_GRAY
       size: 10
