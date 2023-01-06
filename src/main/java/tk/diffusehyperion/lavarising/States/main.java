@@ -111,11 +111,6 @@ public class main implements Listener {
                 stringBuffer.append(Objects.requireNonNull(config.getString("game.main.indicatorTitle"))
                         .replace("%distance%", String.valueOf(player.getLocation().getBlockY() - lavaheight))
                         .replace("%level%", String.valueOf(lavaheight)));
-
-                if (state == States.OVERTIME || state == States.POSTGAME) {
-                    buffer.complete();
-                    this.cancel();
-                }
             }
         };
         task.runTaskTimer(GameMaster.plugin, 0L, 2L);

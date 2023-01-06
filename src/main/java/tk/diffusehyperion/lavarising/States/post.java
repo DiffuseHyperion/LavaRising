@@ -7,6 +7,7 @@ import tk.diffusehyperion.gamemaster.ActionBars.ActionBarSender;
 import tk.diffusehyperion.gamemaster.GamePlayer;
 import tk.diffusehyperion.gamemaster.GameServer;
 import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
+import tk.diffusehyperion.gamemaster.Util.Pair;
 import tk.diffusehyperion.lavarising.Commands.TimerColourParser;
 import tk.diffusehyperion.lavarising.LavaRising;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.main.mainTimers;
 import static tk.diffusehyperion.lavarising.States.overtime.overtimeTimer;
 
 public class post implements Listener {
@@ -28,6 +30,11 @@ public class post implements Listener {
     public static void triggerPost(){
         state = States.POSTGAME;
         GamePlayer.playSoundToAll(Sound.FIREWORK_BLAST);
+
+        for (Pair<CompletableStringBuffer, BukkitRunnable> pair : mainTimers.values()) {
+            pair.getValue0().complete();
+            pair.getValue1().cancel();
+        }
 
         if (Objects.equals(LavaRising.config.getString("game.post.creativeMode"), "winner")) {
             main.winner.setGameMode(GameMode.CREATIVE);

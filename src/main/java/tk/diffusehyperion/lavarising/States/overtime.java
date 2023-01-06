@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.main.mainTimers;
 
 public class overtime {
 
@@ -22,6 +23,11 @@ public class overtime {
         state = States.OVERTIME;
         GamePlayer.playSoundToAll(Sound.AMBIENCE_THUNDER);
         world.getWorldBorder().setSize(config.getInt("game.overtime.finalBorderSize"), config.getInt("game.overtime.speed"));
+
+        for (Pair<CompletableStringBuffer, BukkitRunnable> pair : mainTimers.values()) {
+            pair.getValue0().complete();
+            pair.getValue1().cancel();
+        }
 
         overtimeTimer = getOvertimeTimer();
         for (Player p : Bukkit.getOnlinePlayers()) {
