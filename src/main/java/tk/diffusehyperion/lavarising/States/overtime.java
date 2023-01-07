@@ -51,10 +51,12 @@ public class overtime {
                 stringBuffer.append(GamePlayer.getTimerStringWLogic(timer[0], duration, null, null));
                 stringBuffer.append(" ");
                 stringBuffer.append(ChatColor.RESET);
-                for (String s : config.getStringList("timers.overtime.style.delimeter")) {
+                for (String s : config.getStringList("timers.overtime.style.delimiter")) {
                     stringBuffer.append(s);
                 }
+                stringBuffer.append("/");
                 stringBuffer.append(ChatColor.RESET);
+                stringBuffer.append(" ");
                 stringBuffer.append(replaceTitle(title, timer[0], BigDecimal.valueOf(duration).subtract(timer[0])));
             }
         };

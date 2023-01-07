@@ -15,6 +15,8 @@ import tk.diffusehyperion.gamemaster.Util.CompletableStringBuffer;
 import tk.diffusehyperion.lavarising.States.States;
 import tk.diffusehyperion.lavarising.States.grace;
 
+import java.util.Objects;
+
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 
 
@@ -30,8 +32,12 @@ public class start implements CommandExecutor, Listener {
         } else {
             starting = true;
             sender.sendMessage("Start command received!");
-            reroll.beforeRerollBuffer.complete();
-            reroll.afterRerollBuffer.complete();
+            if (Objects.nonNull(reroll.beforeRerollBuffer)) {
+                reroll.beforeRerollBuffer.complete();
+            }
+            if (Objects.nonNull(reroll.afterRerollBuffer)) {
+                reroll.afterRerollBuffer.complete();
+            }
 
             if (config.getBoolean("game.start.countdown")) {
                 startingGraceTimer = GamePlayer.timer(config.getInt("game.start.timer"),

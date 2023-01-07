@@ -52,8 +52,8 @@ public class post implements Listener {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.kickPlayer(config.getString("game.post.kickMessage"));
-                    GameServer.restart();
                 }
+                GameServer.restart();
             }
         }, hashMap, config.getInt("timers.post.style.size"), TimerColourParser.getTimerColour("timers.post.style")).getValue0();
 

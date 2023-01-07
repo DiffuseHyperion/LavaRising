@@ -76,6 +76,10 @@ public class reroll implements CommandExecutor, Listener {
                         @Override
                         public void run() {
                             allowedtoreroll = true;
+
+                            if (state != PREGAME) {
+                                return;
+                            }
                             int requiredPlayers = getRequiredPlayers();
 
                             afterRerollBuffer = new CompletableStringBuffer();
