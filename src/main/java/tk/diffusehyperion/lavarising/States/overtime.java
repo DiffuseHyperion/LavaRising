@@ -8,7 +8,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.javatuples.Pair;
+import tk.diffusehyperion.gamemaster.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
