@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.javatuples.Pair;
+import tk.diffusehyperion.gamemaster.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
