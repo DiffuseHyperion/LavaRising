@@ -36,3 +36,6 @@ goto start
 - so that the server waits for your input on the cmd prompt before restarting
 
 - i guess you could also edit the restarting file in spigot.yml, but never tried it before myself
+
+# Support
+Contact me via DMS on discord at DiffuseHyperion#0014 if the plugin dies lol
