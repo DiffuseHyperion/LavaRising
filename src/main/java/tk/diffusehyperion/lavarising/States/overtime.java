@@ -8,7 +8,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Pair;
+import tk.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,11 +18,14 @@ import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public class overtime {
 
+    public static boolean overtimeTriggered = false;
+
     public static BossBar overtimeBossbar;
     public static BukkitRunnable overtimeTask;
     public static void triggerOvertime() {
+        overtimeTriggered = true;
         state = States.OVERTIME;
-        gm.GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
+        GamePlayer.playSoundToAll(Sound.ITEM_TOTEM_USE);
 
         for (Pair<BossBar, BukkitRunnable> pair : mainBossbars.values()) {
             pair.getValue0().removeAll();

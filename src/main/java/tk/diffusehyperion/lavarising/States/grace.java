@@ -17,7 +17,7 @@ public class grace {
 
     public static void triggerGrace(){
         state = States.GRACE;
-        gm.GamePlayer.playSoundToAll(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
+        GamePlayer.playSoundToAll(Sound.ENTITY_ENDER_DRAGON_AMBIENT);
         for (Player p: Bukkit.getOnlinePlayers()) {
             p.setGameMode(GameMode.SURVIVAL);
             p.setHealth(20);
@@ -27,7 +27,7 @@ public class grace {
         WorldBorder border = world.getWorldBorder();
         border.setSize(config.getDouble("game.grace.finalBorderSize"), config.getLong("game.grace.speed"));
         border.setWarningDistance(0);
-        BossBar bossbar = gm.GamePlayer.timer(config.getInt("game.grace.duration"), config.getString("timers.grace.name"),
+        BossBar bossbar = GamePlayer.timer(config.getInt("game.grace.duration"), config.getString("timers.grace.name"),
                 BarColor.valueOf(config.getString("timers.grace.colour")),
                 BarStyle.valueOf(config.getString("timers.grace.style")),
                 new BukkitRunnable() {

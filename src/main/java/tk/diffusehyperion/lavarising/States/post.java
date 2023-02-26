@@ -8,26 +8,31 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Pair;
+import tk.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
 import static tk.diffusehyperion.lavarising.States.main.lavaRiser;
 import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
-import static tk.diffusehyperion.lavarising.States.overtime.overtimeBossbar;
-import static tk.diffusehyperion.lavarising.States.overtime.overtimeTask;
+import static tk.diffusehyperion.lavarising.States.overtime.*;
 
 public class post {
     public static void triggerPost(Player winner){
         state = States.POST;
-        gm.GamePlayer.playSoundToAll(Sound.UI_TOAST_CHALLENGE_COMPLETE);
+        GamePlayer.playSoundToAll(Sound.UI_TOAST_CHALLENGE_COMPLETE);
 
         lavaRiser.cancel();
-        overtimeBossbar.removeAll();
-        overtimeTask.cancel();
+        if (overtimeTriggered) {
+            overtimeBossbar.removeAll();
+            overtimeTask.cancel();
+        }
 
+        for (Map.Entry<Player, Pair<BossBar, BukkitRunnable>> entry : mainBossbars.entrySet()) {
+            Bukkit.broadcastMessage("found entry; player: " + entry.getKey().getDisplayName());
+        }
         for (Pair<BossBar, BukkitRunnable> pair : mainBossbars.values()) {
             pair.getValue0().removeAll();
             pair.getValue1().cancel();
@@ -36,7 +41,7 @@ public class post {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("%winner%", winner.getDisplayName());
 
-        BossBar bossbar = gm.GamePlayer.customTimer(config.getInt("game.post.duration"),
+        BossBar bossbar = GamePlayer.customTimer(config.getInt("game.post.duration"),
                 config.getString("timers.post.name"),
                 BarColor.valueOf(config.getString("timers.post.colour")),
                 BarStyle.valueOf(config.getString("timers.post.style")),
@@ -45,20 +50,23 @@ public class post {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.kickPlayer(config.getString("timers.post.kickMessage"));
+                    p.kickPlayer(config.getString("game.post.kickMessage"));
                 }
-                gm.GameServer.restart();
+                GameServer.restart();
             }
         }).getValue0();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            bossbar.addPlayer(p);
-        }
+        GamePlayer.showBossbarToAll(bossbar);
+
         if (Objects.equals(config.getString("game.post.creativeMode"), "winner")) {
             winner.setGameMode(GameMode.CREATIVE);
         } else if (Objects.equals(config.getString("game.post.creativeMode"), "all")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.setGameMode(GameMode.CREATIVE);
             }
+        }
+
+        for (String s : config.getStringList("game.post.commands")) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%winner%", winner.getDisplayName()));
         }
     }
 }

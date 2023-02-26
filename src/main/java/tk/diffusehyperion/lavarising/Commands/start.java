@@ -1,32 +1,17 @@
 package tk.diffusehyperion.lavarising.Commands;
 
-import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import tk.diffusehyperion.lavarising.States.grace;
 import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Objects;
-
-import static tk.diffusehyperion.lavarising.Commands.reroll.*;
-import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static tk.diffusehyperion.lavarising.States.pregame.*;
 
 
-public class start implements CommandExecutor, Listener {
-
-    public static boolean starting;
-    public static BossBar bossbar;
+public class start implements CommandExecutor{
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (Bukkit.getServer().getOnlinePlayers().size() == 1) {
             sender.sendMessage("There is not enough players...");
             return true;
@@ -37,39 +22,13 @@ public class start implements CommandExecutor, Listener {
             return true;
         }
 
-        starting = true;
+        if (rerollingEnabled && !allowedToReroll) {
+            sender.sendMessage("You need to wait for the reroll cooldown before starting!");
+            return true;
+        }
+
         sender.sendMessage("Start command received!");
-        if (!Objects.isNull(rerollBossbar1)) {
-            rerollBossbar1.removeAll();
-            rerollTask1.cancel();
-        }
-        if (!Objects.isNull(rerollBossbar2)) {
-            rerollBossbar2.removeAll();
-        }
-        if (config.getBoolean("game.pregame.start.countdown")) {
-            bossbar = gm.GamePlayer.timer(config.getInt("game.pregame.start.timer"), config.getString("timers.pregame.start.name"),
-                    BarColor.valueOf(config.getString("timers.pregame.start.colour")),
-                    BarStyle.valueOf(config.getString("timers.pregame.start.style")),
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            grace.triggerGrace();
-                        }
-                    }).getValue0();
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                bossbar.addPlayer(p);
-            }
-        } else {
-            grace.triggerGrace();
-        }
+        startGame();
         return true;
     }
-
-    @EventHandler
-    public void playerJoin(PlayerJoinEvent e) {
-        if (starting) {
-            bossbar.addPlayer(e.getPlayer());
-        }
-    }
-
 }

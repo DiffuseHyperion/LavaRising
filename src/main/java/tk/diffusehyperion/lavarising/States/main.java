@@ -10,7 +10,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Pair;
+import tk.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,24 +29,27 @@ public class main {
 
     public static void triggerMain(){
         state = States.MAIN;
-        gm.GamePlayer.playSoundToAll(Sound.ENTITY_WITHER_AMBIENT);
+        GamePlayer.playSoundToAll(Sound.ENTITY_WITHER_AMBIENT);
         world.setPVP(true);
+
+        int defaultHeight;
         String version = Bukkit.getBukkitVersion();
         int minorVersion = Integer.parseInt(version.substring(version.indexOf(".") + 1, version.indexOf(".") + 3));
         if (minorVersion >= 18) {
-            Bukkit.getLogger().info("Detected version >=1.18! Lava starts at -63.");
-            lavaheight = -63;
+            defaultHeight = -63;
         } else {
-            Bukkit.getLogger().info("Detected version <1.18! Lava starts at -1.");
-            lavaheight = 1;
+            defaultHeight = 1;
         }
+        lavaheight = config.getInt("game.main.beginHeight", defaultHeight);
+        Bukkit.getLogger().info("Lava will begin at y=" + lavaheight);
+
         timer = new double[]{0};
         int coords = BigDecimal.valueOf(config.getInt("game.grace.finalBorderSize")).divide(BigDecimal.valueOf(2), RoundingMode.UP).intValue();
         lavaRiser = new BukkitRunnable() {
             @Override
             public void run() {
                 if (timer[0] >= config.getInt("game.main.lavaInterval")) {
-                    gm.GameWorld.fillBlocks(new Location(world, -coords, lavaheight, -coords), new Location(world, coords, lavaheight, coords), Material.LAVA);
+                    GameWorld.fillBlocks(new Location(world, -coords, lavaheight, -coords), new Location(world, coords, lavaheight, coords), Material.getMaterial(Objects.requireNonNull(config.getString("game.main.setBlock"))));
                     lavaheight++;
                     timer[0] = 0;
                 }
@@ -62,7 +65,7 @@ public class main {
             mainTimer(p);
         }
         if (config.getBoolean("game.overtime.warning.enabled")) {
-            BossBar bossbar = gm.GamePlayer.timer(config.getInt("game.overtime.warning.time"),
+            BossBar bossbar = GamePlayer.timer(config.getInt("game.overtime.warning.time"),
                     Objects.requireNonNull(config.getString("timers.overtime.warning.name")).replace("%threshold%", String.valueOf(config.getInt("game.overtime.threshold"))),
                     BarColor.valueOf(config.getString("timers.overtime.warning.colour")),
                     BarStyle.valueOf(config.getString("timers.overtime.warning.style"))).getValue0();

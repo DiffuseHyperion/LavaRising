@@ -1,6 +1,9 @@
 package tk.diffusehyperion.lavarising;
 
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -11,12 +14,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.diffusehyperion.gamemaster.GameMaster;
-import tk.diffusehyperion.gamemaster.GameServer;
+import tk.diffusehyperion.gamemaster.Components.GamePlayer;
+import tk.diffusehyperion.gamemaster.Components.GameServer;
+import tk.diffusehyperion.gamemaster.Components.GameWorld;
 import tk.diffusehyperion.lavarising.Commands.reroll;
 import tk.diffusehyperion.lavarising.Commands.start;
 import tk.diffusehyperion.lavarising.States.States;
 import tk.diffusehyperion.lavarising.States.post;
+import tk.diffusehyperion.lavarising.States.pregame;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,10 +35,12 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public static World world;
     public static States state;
     public static Plugin plugin;
-    public static GameMaster gm;
-
     public static Player winner;
     public static ArrayList<Sound> attacksounds = new ArrayList<>();
+
+    public static GamePlayer GamePlayer;
+    public static GameServer GameServer;
+    public static GameWorld GameWorld;
 
     @Override
     public void onEnable() {
@@ -50,12 +57,12 @@ public final class LavaRising extends JavaPlugin implements Listener {
         Objects.requireNonNull(this.getCommand("reroll")).setExecutor(new reroll());
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new reroll(), this);
-        getServer().getPluginManager().registerEvents(new start(), this);
+        getServer().getPluginManager().registerEvents(new pregame(), this);
 
         boolean requireResetConfig;
         boolean requireResetRestart = false;
         try {
-            requireResetConfig = gm.GameServer.checkForServerProperties(
+            requireResetConfig = GameServer.checkForServerProperties(
                     config.getBoolean("debug.ignoreConfig.disableSpawnProtection"),
                     config.getBoolean("debug.ignoreConfig.disableNether"),
                     config.getBoolean("debug.ignoreConfig.disableEnd"),
@@ -65,19 +72,19 @@ public final class LavaRising extends JavaPlugin implements Listener {
         }
         if (config.getBoolean("debug.restartSetup.enabled")) {
             try {
-                requireResetRestart = gm.GameServer.setupRestart(GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", gm.GameServer.getOS().toString())),
-                        config.getString("debug.restartSetup.jar", gm.GameServer.getServerJar().toString()));
+                requireResetRestart = GameServer.setupRestart(tk.diffusehyperion.gamemaster.Components.GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", GameServer.getOS().toString())),
+                        config.getString("debug.restartSetup.jar", GameServer.getServerJar().toString()));
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
         }
 
         if (requireResetConfig || requireResetRestart) {
-            gm.GameServer.restart();
+            GameServer.restart();
         }
 
-        world = gm.GameWorld.createWorld(config.getString("game.pregame.worldName"), config.getLong("game.pregame.seed", new Random().nextLong()));
-        gm.GameWorld.setupWorld(world, true, config.getDouble("game.pregame.borderSize"), 0, 0, 0);
+        world = GameWorld.createWorld(Objects.requireNonNull(config.getString("game.pregame.worldName")), config.getLong("game.pregame.seed", new Random().nextLong()));
+        GameWorld.setupWorld(world, true, config.getDouble("game.pregame.borderSize"), 0, 0, 0);
     }
 
     @Override
@@ -99,7 +106,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
             event.setQuitMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage")).replace("%original%", Objects.requireNonNull(event.getQuitMessage()))
                     .replace("%player%", event.getPlayer().getName()).replace("%left%", String.valueOf(mainBossbars.size())));
 
-            gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
+            GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
 
             if (mainBossbars.size() == 1) {
                 winner = (Player) mainBossbars.keySet().toArray()[0];
@@ -111,7 +118,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public void setupFields() {
         plugin = this;
         state = States.PREGAME;
-        start.starting = false;
+        pregame.starting = false;
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_CRIT);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK);
         attacksounds.add(Sound.ENTITY_PLAYER_ATTACK_STRONG);
@@ -153,12 +160,13 @@ public final class LavaRising extends JavaPlugin implements Listener {
             }
             case MAIN, OVERTIME -> {
                 player.setGameMode(GameMode.SPECTATOR);
+                mainBossbars.get(player).getValue0().removeAll();
                 mainBossbars.remove(player);
 
                 event.setDeathMessage(ChatColor.YELLOW + Objects.requireNonNull(config.getString("game.main.deathMessage")).replace("%original%", Objects.requireNonNull(event.getDeathMessage()))
                         .replace("%player%", event.getEntity().getName()).replace("%left%", String.valueOf(mainBossbars.size())));
 
-                gm.GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
+                GamePlayer.playSoundToAll(attacksounds.get(new Random().nextInt(4)));
 
                 if (mainBossbars.size() <= 1) {
                     winner = (Player) mainBossbars.keySet().toArray()[0];
@@ -173,10 +181,11 @@ public final class LavaRising extends JavaPlugin implements Listener {
     }
 
     public void onLoad() {
-        gm = (GameMaster) getServer().getPluginManager().getPlugin("GameMaster");
-        assert gm != null;
+        GamePlayer = new GamePlayer();
+        GameServer = new GameServer();
+        GameWorld = new GameWorld();
         try {
-            gm.GameWorld.deleteWorld();
+            GameWorld.deleteWorld();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

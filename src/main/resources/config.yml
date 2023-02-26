@@ -17,8 +17,8 @@ game:
     # The size for the border at the start. Unit is the number of blocks for the border diameter.
     rerolling:
       # Rerolling is a feature that allows players to vote on "rerolling" a map, restarting the server so that a new world is generated.
-      # Rerolling is disabled when the server starts, and will be enabled after X seconds.
-      # This is to allow the world to load first, and to not cause any weird world gen bugs.
+      # Starting by any means and rerolling is disabled when the server starts, and will be enabled after X seconds.
+      # This is to allow the world to load first, and to not cause any weird world gen bugs
       enabled: true
       # Allow rerolling of the map by a command.
       rerollTimer: 15
@@ -29,10 +29,21 @@ game:
       # The plugin kicks everyone when a reroll is decided upon to recreate a world. This will be the kick message.
       # Replace %sender% with the final person's decision to reroll the map.
     start:
+      waitingBossbar: true
+      # Show a bossbar when waiting for the game to start.
+      # Disable this if the number of bossbars are cluttering people's screens.
       countdown: true
       # If this is enabled, the plugin will countdown X seconds before starting, or immediately start if this is false.
       timer: 5
       # How long to wait if "countdown" is true.
+      autostart:
+        # Enable autostarting. The plugin will automatically start the game when X players are in the server.
+        enabled: false
+        players: 2
+        # How many players need to be in the server before the game starts. This should be >=2!
+        intermission: 15
+        # How long to delay the start of the game once the required amount of players is reached.
+        # Keep in mind that the start countdown will also be triggered!
 
   grace:
     duration: 60
@@ -56,6 +67,13 @@ game:
     # Replace the original death message with %original%.
     # Replace the player who died with %player%.
     # Replace the amount of players left with %left%.
+    setBlock: LAVA
+    # Instead of filling lava, you can change what's being used to fill the world.
+    # Values should come from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+    # If you do decide to edit this, try setting it to AIR. This can reduce lag to the server by tons, but kinna loses the point of the whole plugin.
+    beginHeight:
+    # Where the lava should begin.
+    # The height will be automatically set if you leave this blank. (Default values: y=1 for 1.17 and below, y=-63 for 1.18 and above.
 
   overtime:
     # Lava does not rise during overtime. Game ends when there is one person left alive!
@@ -82,6 +100,10 @@ game:
     # Accepted values: 'none', 'winner', 'all'
     kickMessage: The game is restarting now. Join back soon!
     # What should be the kick message when the server is restarting.
+    commands:
+      #- say %winner% won the game!
+      #- pay %winner% 500
+      # OPTIONAL! What commands to run when a player wins. Use %winner% as a placeholder for the winner.
 
 # For all configs with the name 'timername', there is multiple variables that you can add. The game will automatically translate these variables.
 timers:
@@ -101,15 +123,36 @@ timers:
   # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
   pregame:
     rerolling:
-      name: "Rerolling of the map will be enabled in %time_left% seconds."
-      colour: WHITE
-      style: SEGMENTED_6
-    enabled:
-      name: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
-      # Replace %required% with the amount of votes required to reroll the map.
+      # Neither will not be shown nor used if rerolling is not enabled.
+      enabling:
+        name: "Rerolling of the map will be enabled in %time_left% seconds."
+        colour: WHITE
+        style: SEGMENTED_6
+      enabled:
+        name: "Rerolling of the world is now enabled! Do /reroll to vote to reroll. %required% players needs to vote to reroll."
+        # Replace %required% with the amount of votes required to reroll the map.
+        # No other placeholders allowed.
+        colour: WHITE
+        style: SOLID
+    autostart:
+      # Neither will not be shown nor used if autostart is not enabled.
+      waiting:
+        # This will be shown alongside with rerolling, if enabled.
+        name: "Game automatically starts when there are %required% players online!"
+        # Replace %required% with the amount of players needed to autostart.
+        # No other placeholders allowed.
+        colour: GREEN
+        style: SOLID
+      intermission:
+        name: "Waiting for more players... Starting in %time_left% seconds!"
+        # Replace %delay% with the duration of the intermission.
+        colour: YELLOW
+        style: SEGMENTED_10
+    waiting:
+      name: "Waiting for the game to start..."
       # No other placeholders allowed.
-      colour: WHITE
-      style: SOLID
+      colour: GREEN
+      style: SEGMENTED_6
     start:
       name: "Starting in %time_left% seconds!"
       colour: GREEN
@@ -146,13 +189,13 @@ debug:
   ignoreConfig:
     # The plugin will automatically edit some values in your files, specifically server.properties and bukkit.yml, to disable spawn protection, nether and end. This is for game balance and performance.
     # However, you can choose to ignore these checks. I would highly recommend leaving it as is, but it's your decision at the end.
-    disableSpawnProtection: false
+    disableSpawnProtection: true
     # Spawn protection prevents non-op users from breaking or placing blocks near spawn.
-    disableNether: false
+    disableNether: true
     # Self-explanatory, this is disabled to prevent cheaters from hiding out from the lava in the nether.
-    disableEnd: false
+    disableEnd: true
     # Self-explanatory, this is disabled to stop unnecessary saving of the end, and by extension speeds up the server restarting.
-    allowFlight: false
+    allowFlight: true
     # Minecraft's built-in anticheat usually kicks more innocent players than cheaters, and you cannot rejoin during the main phase. Turning this off usually prevent false-positives from the anti-cheat, and improves player experience.
     # if you really want an anticheat install one from spigot
   restartSetup:
