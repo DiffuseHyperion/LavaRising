@@ -11,7 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import tk.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static tk.diffusehyperion.lavarising.LavaRising.*;
@@ -28,10 +27,6 @@ public class post {
         if (overtimeTriggered) {
             overtimeBossbar.removeAll();
             overtimeTask.cancel();
-        }
-
-        for (Map.Entry<Player, Pair<BossBar, BukkitRunnable>> entry : mainBossbars.entrySet()) {
-            Bukkit.broadcastMessage("found entry; player: " + entry.getKey().getDisplayName());
         }
         for (Pair<BossBar, BukkitRunnable> pair : mainBossbars.values()) {
             pair.getValue0().removeAll();
