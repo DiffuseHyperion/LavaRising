@@ -18,6 +18,9 @@ import static me.diffusehyperion.lavarising.States.main.lavaRiser;
 import static me.diffusehyperion.lavarising.States.main.mainBossbars;
 import static me.diffusehyperion.lavarising.States.overtime.*;
 
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
+import me.diffusehyperion.gamemaster.Components.GameServer;
+
 public class post {
     public static void triggerPost(Player winner){
         state = States.POST;

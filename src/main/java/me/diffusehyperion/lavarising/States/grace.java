@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static me.diffusehyperion.lavarising.LavaRising.*;
 
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
 
 public class grace {
 

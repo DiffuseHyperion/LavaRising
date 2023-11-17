@@ -74,7 +74,7 @@
         <dependency>
             <groupId>me.diffusehyperion</groupId>
             <artifactId>gamemaster</artifactId>
-            <version>1.0.3.1-rc1-1.13</version>
+            <version>1.0.3.1-rc2-1.13</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

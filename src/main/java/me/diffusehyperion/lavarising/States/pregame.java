@@ -23,6 +23,8 @@ import java.util.Objects;
 import static me.diffusehyperion.lavarising.LavaRising.*;
 import static me.diffusehyperion.lavarising.States.States.PREGAME;
 
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
+
 public class pregame implements Listener {
 
     // rerolling related

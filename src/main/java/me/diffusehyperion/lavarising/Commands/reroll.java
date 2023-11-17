@@ -14,6 +14,8 @@ import static me.diffusehyperion.lavarising.LavaRising.*;
 import static me.diffusehyperion.lavarising.States.States.PREGAME;
 import static me.diffusehyperion.lavarising.States.pregame.*;
 
+import me.diffusehyperion.gamemaster.Components.GameServer;
+
 public class reroll implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

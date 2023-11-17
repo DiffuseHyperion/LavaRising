@@ -38,10 +38,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
     public static Player winner;
     public static ArrayList<Sound> attacksounds = new ArrayList<>();
 
-    public static GamePlayer GamePlayer;
-    public static GameServer GameServer;
-    public static GameWorld GameWorld;
-
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
@@ -181,9 +177,6 @@ public final class LavaRising extends JavaPlugin implements Listener {
     }
 
     public void onLoad() {
-        GamePlayer = new GamePlayer();
-        GameServer = new GameServer();
-        GameWorld = new GameWorld();
         try {
             GameWorld.deleteWorld();
         } catch (IOException e) {

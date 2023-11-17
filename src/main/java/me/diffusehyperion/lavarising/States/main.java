@@ -20,6 +20,9 @@ import java.util.Objects;
 import static me.diffusehyperion.lavarising.LavaRising.*;
 import static me.diffusehyperion.lavarising.States.overtime.triggerOvertime;
 
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
+import me.diffusehyperion.gamemaster.Components.GameWorld;
+
 public class main {
     public static HashMap<Player, Pair<BossBar, BukkitRunnable>> mainBossbars = new HashMap<>();
     public static int lavaheight;

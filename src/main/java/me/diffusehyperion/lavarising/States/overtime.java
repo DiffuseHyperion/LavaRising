@@ -16,6 +16,8 @@ import java.math.RoundingMode;
 import static me.diffusehyperion.lavarising.LavaRising.*;
 import static me.diffusehyperion.lavarising.States.main.mainBossbars;
 
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
+
 public class overtime {
     public static boolean overtimeTriggered = false;
     public static BossBar overtimeBossbar;
