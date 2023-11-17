@@ -1,11 +1,11 @@
-package tk.diffusehyperion.lavarising.Commands;
+package me.diffusehyperion.lavarising.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import static tk.diffusehyperion.lavarising.States.pregame.*;
+import static me.diffusehyperion.lavarising.States.pregame.*;
 
 
 public class start implements CommandExecutor{

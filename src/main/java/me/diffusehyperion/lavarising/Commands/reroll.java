@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.Commands;
+package me.diffusehyperion.lavarising.Commands;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
 
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
-import static tk.diffusehyperion.lavarising.States.States.PREGAME;
-import static tk.diffusehyperion.lavarising.States.pregame.*;
+import static me.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.States.States.PREGAME;
+import static me.diffusehyperion.lavarising.States.pregame.*;
 
 public class reroll implements CommandExecutor, Listener {
     @Override

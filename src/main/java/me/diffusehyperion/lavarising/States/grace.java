@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -10,7 +10,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.LavaRising.*;
 
 
 public class grace {

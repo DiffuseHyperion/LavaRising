@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -8,15 +8,15 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Utility.Pair;
+import me.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
-import static tk.diffusehyperion.lavarising.States.main.lavaRiser;
-import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
-import static tk.diffusehyperion.lavarising.States.overtime.*;
+import static me.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.States.main.lavaRiser;
+import static me.diffusehyperion.lavarising.States.main.mainBossbars;
+import static me.diffusehyperion.lavarising.States.overtime.*;
 
 public class post {
     public static void triggerPost(Player winner){

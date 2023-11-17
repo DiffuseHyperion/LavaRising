@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 public enum States {
     PREGAME,

@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Events.FirstPlayerJoinEvent.FirstPlayerJoinEvent;
-import tk.diffusehyperion.gamemaster.Utility.Pair;
+import me.diffusehyperion.gamemaster.Events.FirstPlayerJoinEvent.FirstPlayerJoinEvent;
+import me.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
-import static tk.diffusehyperion.lavarising.States.States.PREGAME;
+import static me.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.States.States.PREGAME;
 
 public class pregame implements Listener {
 
@@ -75,7 +75,7 @@ public class pregame implements Listener {
 
     @EventHandler
     public void playerJoinEvent(PlayerJoinEvent e) {
-        if (tk.diffusehyperion.gamemaster.Components.GameServer.playersJoinedBefore && state == PREGAME) {
+        if (me.diffusehyperion.gamemaster.Components.GameServer.playersJoinedBefore && state == PREGAME) {
             Player p = e.getPlayer();
             if (rerollingEnabled) {
                 if (allowedToReroll) {

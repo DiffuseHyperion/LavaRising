@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising;
+package me.diffusehyperion.lavarising;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -14,21 +14,21 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.diffusehyperion.gamemaster.Components.GamePlayer;
-import tk.diffusehyperion.gamemaster.Components.GameServer;
-import tk.diffusehyperion.gamemaster.Components.GameWorld;
-import tk.diffusehyperion.lavarising.Commands.reroll;
-import tk.diffusehyperion.lavarising.Commands.start;
-import tk.diffusehyperion.lavarising.States.States;
-import tk.diffusehyperion.lavarising.States.post;
-import tk.diffusehyperion.lavarising.States.pregame;
+import me.diffusehyperion.gamemaster.Components.GamePlayer;
+import me.diffusehyperion.gamemaster.Components.GameServer;
+import me.diffusehyperion.gamemaster.Components.GameWorld;
+import me.diffusehyperion.lavarising.Commands.reroll;
+import me.diffusehyperion.lavarising.Commands.start;
+import me.diffusehyperion.lavarising.States.States;
+import me.diffusehyperion.lavarising.States.post;
+import me.diffusehyperion.lavarising.States.pregame;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
+import static me.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public final class LavaRising extends JavaPlugin implements Listener {
     public static FileConfiguration config;
@@ -72,7 +72,7 @@ public final class LavaRising extends JavaPlugin implements Listener {
         }
         if (config.getBoolean("debug.restartSetup.enabled")) {
             try {
-                requireResetRestart = GameServer.setupRestart(tk.diffusehyperion.gamemaster.Components.GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", GameServer.getOS().toString())),
+                requireResetRestart = GameServer.setupRestart(me.diffusehyperion.gamemaster.Components.GameServer.OSTypes.valueOf(config.getString("debug.restartSetup.os", GameServer.getOS().toString())),
                         config.getString("debug.restartSetup.jar", GameServer.getServerJar().toString()));
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);

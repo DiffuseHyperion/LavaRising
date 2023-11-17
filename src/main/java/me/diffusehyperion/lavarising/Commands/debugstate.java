@@ -1,10 +1,10 @@
-package tk.diffusehyperion.lavarising.Commands;
+package me.diffusehyperion.lavarising.Commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import static tk.diffusehyperion.lavarising.LavaRising.state;
+import static me.diffusehyperion.lavarising.LavaRising.state;
 
 public class debugstate implements CommandExecutor {
     @Override

@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -8,18 +8,16 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Utility.Pair;
+import me.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
-import static tk.diffusehyperion.lavarising.States.main.mainBossbars;
+import static me.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.States.main.mainBossbars;
 
 public class overtime {
-
     public static boolean overtimeTriggered = false;
-
     public static BossBar overtimeBossbar;
     public static BukkitRunnable overtimeTask;
     public static void triggerOvertime() {

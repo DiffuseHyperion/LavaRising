@@ -1,4 +1,4 @@
-package tk.diffusehyperion.lavarising.States;
+package me.diffusehyperion.lavarising.States;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,18 +10,17 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import tk.diffusehyperion.gamemaster.Utility.Pair;
+import me.diffusehyperion.gamemaster.Utility.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static tk.diffusehyperion.lavarising.LavaRising.*;
-import static tk.diffusehyperion.lavarising.States.overtime.triggerOvertime;
+import static me.diffusehyperion.lavarising.LavaRising.*;
+import static me.diffusehyperion.lavarising.States.overtime.triggerOvertime;
 
 public class main {
-
     public static HashMap<Player, Pair<BossBar, BukkitRunnable>> mainBossbars = new HashMap<>();
     public static int lavaheight;
     public static double[] timer;
